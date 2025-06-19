@@ -56,11 +56,24 @@ class DashboardController extends AbstractController
         $dernieresEntrees = $entreestockRepository->findRecentWithArticles(5);
         $dernieresSorties = $sortiestockRepository->findRecentWithArticles(5);
         
+        // Données pour le graphique (Chart.js)
+        $labels = [];
+        $entrees = [];
+        $sorties = [];
+        foreach ($articles as $article) {
+            $labels[] = $article->getNomart();
+            $entrees[] = $entreestockRepository->count(['idart' => $article]);
+            $sorties[] = $sortiestockRepository->count(['idart' => $article]);
+        }
+        
         return $this->render('dashboard/index.html.twig', [
             'stats' => $stats,
             'articles_critiques' => $articlesCritiques,
             'dernieres_entrees' => $dernieresEntrees,
             'dernieres_sorties' => $dernieresSorties,
+            'labels' => $labels,
+            'entrees' => $entrees,
+            'sorties' => $sorties,
         ]);
     }
 

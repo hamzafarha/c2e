@@ -45,7 +45,7 @@
 							{% endif %}
 						</td>
 						<td>
-							<a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-primary">🔍 Détail</a>
+							<a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-primary">🔍 Détails</a>
 							<a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
 							<a href="{{ path('app_entreestock_new') }}?article={{ article.id }}" class="btn btn-sm btn-success">📥 Entrée</a>
 							<a href="{{ path('app_sortiestock_new') }}?article={{ article.id }}" class="btn btn-sm btn-danger">📤 Sortie</a>

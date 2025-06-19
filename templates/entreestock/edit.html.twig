@@ -40,7 +40,7 @@
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Total estimé</label>
                                 <input type="text" class="form-control" id="total-estimate" readonly
-                                       value="{{ (entreestock.quantite * entreestock.prixu)|number_format(2, '.', '') }}€">
+                                       value="{{ (entreestock.quantite * entreestock.prixu)|number_format(2, '.', '') }} DT">
                             </div>
                         </div>
 
@@ -76,7 +76,7 @@
                 const quantite = parseFloat(quantiteInput.value) || 0;
                 const prix = parseFloat(prixInput.value) || 0;
                 const total = quantite * prix;
-                totalInput.value = total.toFixed(2) + '€';
+                totalInput.value = total.toFixed(2) + ' DT';
             }
 
             quantiteInput.addEventListener('input', updateTotal);

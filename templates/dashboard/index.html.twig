@@ -58,7 +58,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4>{{ stats.valeur_stock_total|number_format(0, ',', ' ') }}€</h4>
+                                <h4>{{ stats.valeur_stock_total|number_format(0, ',', ' ') }} DT</h4>
                                 <p class="mb-0">Valeur stock</p>
                             </div>
                             <div class="align-self-center">
@@ -69,6 +69,45 @@
                 </div>
             </div>
         </div>
+
+        <!-- Statistiques du stock (graphe) + bouton export PDF -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-bar-chart"></i> Statistiques du stock</span>
+                        <a href="{{ path('stock_export_pdf') }}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        const ctx = document.getElementById('stockChart').getContext('2d');
+        const stockChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|json_encode|raw }},
+                datasets: [
+                    {
+                        label: 'Entrées',
+                        data: {{ entrees|json_encode|raw }},
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                    },
+                    {
+                        label: 'Sorties',
+                        data: {{ sorties|json_encode|raw }},
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                    }
+                ]
+            }
+        });
+        </script>
 
         <div class="row">
             <!-- Articles en stock critique -->
