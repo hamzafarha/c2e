@@ -39,15 +39,18 @@ class Equipement
     #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'equipement')]
     private Collection $interventions;
 
+    #[ORM\Column(length: 255)]
+    private ?string $etat = null;
+
     public function __construct()
     {
         $this->interventions = new ArrayCollection();
     }
 
-    public function getIdeq(): ?int
-    {
-        return $this->ideq;
-    }
+    public function getId(): ?int
+{
+    return $this->ideq;
+}
 
     public function getTypeeq(): ?string
     {
@@ -154,5 +157,17 @@ class Equipement
     public function __toString(): string
     {
         return $this->nomeq ?? '';
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(string $etat): static
+    {
+        $this->etat = $etat;
+
+        return $this;
     }
 }

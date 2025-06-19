@@ -1,45 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Equipement index{% endblock %}
+{% block title %}Liste des Équipements{% endblock %}
 
 {% block body %}
-    <h1>Equipement index</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4">📦 Liste des Équipements</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Ideq</th>
-                <th>Typeeq</th>
-                <th>Nomeq</th>
-                <th>Referenceeq</th>
-                <th>Localisationeq</th>
-                <th>Modeleeq</th>
-                <th>Numserieeq</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for equipement in equipements %}
-            <tr>
-                <td>{{ equipement.ideq }}</td>
-                <td>{{ equipement.typeeq }}</td>
-                <td>{{ equipement.nomeq }}</td>
-                <td>{{ equipement.referenceeq }}</td>
-                <td>{{ equipement.localisationeq }}</td>
-                <td>{{ equipement.modeleeq }}</td>
-                <td>{{ equipement.numserieeq }}</td>
-                <td>
-                    <a href="{{ path('app_equipement_show', {'ideq': equipement.ideq}) }}">show</a>
-                    <a href="{{ path('app_equipement_edit', {'ideq': equipement.ideq}) }}">edit</a>
-                </td>
-            </tr>
+        <div class="mb-3 text-end">
+            <a href="{{ path('app_equipement_new') }}" class="btn btn-success">
+                ➕ Ajouter un équipement
+            </a>
+        </div>
+
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Type</th>
+                    <th>Nom</th>
+                    <th>Référence</th>
+                    <th>Emplacement</th>
+                    <th>Modèle</th>
+                    <th>N° Série</th>
+                    <th>Etat</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for equipement in equipements %}
+                <tr>
+                    <td>{{ equipement.getId() }}</td>
+                    <td>{{ equipement.getTypeeq() }}</td>
+                    <td>{{ equipement.getNomeq() }}</td>
+                    <td>{{ equipement.getReferenceeq() }}</td>
+                    <td>{{ equipement.getLocalisationeq() }}</td>
+                    <td>{{ equipement.getModeleeq() }}</td>
+                    <td>{{ equipement.getNumserieeq() }}</td>
+                    <td>
+        {% if equipement.getEtat() == 'en_service' %}
+            <span class="badge bg-success">En service</span>
+        {% elseif equipement.getEtat() == 'en_panne' %}
+            <span class="badge bg-danger">En panne</span>
+        {% elseif equipement.getEtat() == 'maintenance' %}
+            <span class="badge bg-warning text-dark">Maintenance</span>
+        {% elseif equipement.getEtat() == 'hors_service' %}
+            <span class="badge bg-secondary">Hors service</span>
         {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <span class="badge bg-light text-dark">Inconnu</span>
+        {% endif %}
+    </td>
+                    <td>
+                        <a href="{{ path('app_equipement_show', {'ideq': equipement.getId()}) }}"
+                           class="btn btn-sm btn-primary">🔍 Détail</a>
+                        <a href="{{ path('app_equipement_edit', {'ideq': equipement.getId()}) }}"
+                           class="btn btn-sm btn-warning">✏️ Modifier</a>
+                           <a href="{{ path('app_intervention_new', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-success">🛠️ Intervenir</a>
 
-    <a href="{{ path('app_equipement_new') }}">Create new</a>
+                    </td>
+
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Aucun équipement trouvé.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

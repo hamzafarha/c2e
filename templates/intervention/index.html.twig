@@ -8,13 +8,13 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Idint</th>
-                <th>Dateint</th>
-                <th>Typeint</th>
+                <th>num</th>
+                <th>Date intervention</th>
+                <th>Type intervention</th>
                 <th>Technicien</th>
-                <th>Etatapres</th>
-                <th>Prochainedate</th>
-                <th>actions</th>
+                <th>Etat aprés</th>
+                <th>Prochaine date</th>
+                <th>ACTIONS</th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +25,7 @@
                 <td>{{ intervention.typeint }}</td>
                 <td>{{ intervention.technicien }}</td>
                 <td>{{ intervention.etatapres }}</td>
-                <td>{{ intervention.prochainedate }}</td>
+                <td>{{ intervention.prochainedate|date('d/m/Y') }}</td>
                 <td>
                     <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}">show</a>
                     <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}">edit</a>

@@ -1,4 +1,82 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            {{ form_label(form.typeeq, 'Type d’équipement') }}
+            {{ form_widget(form.typeeq, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Ex : Pompe, Moteur...'
+                }
+            }) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_label(form.nomeq, 'Nom de l’équipement') }}
+            {{ form_widget(form.nomeq, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Nom interne ou technique'
+                }
+            }) }}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            {{ form_label(form.referenceeq, 'Référence') }}
+            {{ form_widget(form.referenceeq, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Réf. constructeur'
+                }
+            }) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_label(form.localisationeq, 'Emplacement') }}
+            {{ form_widget(form.localisationeq, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Ex : Atelier A - Zone 3'
+                }
+            }) }}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            {{ form_label(form.modeleeq, 'Modèle') }}
+            {{ form_widget(form.modeleeq, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'Modèle exact'
+                }
+            }) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_label(form.numserieeq, 'Numéro de série') }}
+            {{ form_widget(form.numserieeq, {
+                'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'N° de série unique'
+                }
+            }) }}
+        </div>
+    </div>
+    <div class="row mb-3">
+    <div class="col-md-6">
+        {{ form_label(form.etat, 'État de l’équipement') }}
+        {{ form_widget(form.etat, {
+            'attr': {
+                'class': 'form-control',
+                'placeholder': 'Ex : En service, En panne...'
+            }
+        }) }}
+    </div>
+</div>
+
+
+    <div class="text-end mt-4">
+        <button class="btn btn-success">
+            ✅ Enregistrer l’équipement
+        </button>
+    </div>
 {{ form_end(form) }}
