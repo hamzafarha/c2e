@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Intervention index{% endblock %}
+
+{% block body %}
+    <h1>Intervention index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Idint</th>
+                <th>Dateint</th>
+                <th>Typeint</th>
+                <th>Technicien</th>
+                <th>Etatapres</th>
+                <th>Prochainedate</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for intervention in interventions %}
+            <tr>
+                <td>{{ intervention.idint }}</td>
+                <td>{{ intervention.dateint ? intervention.dateint|date('Y-m-d') : '' }}</td>
+                <td>{{ intervention.typeint }}</td>
+                <td>{{ intervention.technicien }}</td>
+                <td>{{ intervention.etatapres }}</td>
+                <td>{{ intervention.prochainedate }}</td>
+                <td>
+                    <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}">show</a>
+                    <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_intervention_new') }}">Create new</a>
+{% endblock %}

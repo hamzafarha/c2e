@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Equipement index{% endblock %}
+
+{% block body %}
+    <h1>Equipement index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ideq</th>
+                <th>Typeeq</th>
+                <th>Nomeq</th>
+                <th>Referenceeq</th>
+                <th>Localisationeq</th>
+                <th>Modeleeq</th>
+                <th>Numserieeq</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for equipement in equipements %}
+            <tr>
+                <td>{{ equipement.ideq }}</td>
+                <td>{{ equipement.typeeq }}</td>
+                <td>{{ equipement.nomeq }}</td>
+                <td>{{ equipement.referenceeq }}</td>
+                <td>{{ equipement.localisationeq }}</td>
+                <td>{{ equipement.modeleeq }}</td>
+                <td>{{ equipement.numserieeq }}</td>
+                <td>
+                    <a href="{{ path('app_equipement_show', {'ideq': equipement.ideq}) }}">show</a>
+                    <a href="{{ path('app_equipement_edit', {'ideq': equipement.ideq}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_equipement_new') }}">Create new</a>
+{% endblock %}
