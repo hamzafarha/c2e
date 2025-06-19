@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article {{ article.refart }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">📦 Détails de l'article</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="30%">ID :</th>
+                                <td>{{ article.id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Référence :</th>
+                                <td><strong>{{ article.refart }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Nom :</th>
+                                <td>{{ article.nomart }}</td>
+                            </tr>
+                            <tr>
+                                <th>Seuil d'alerte :</th>
+                                <td>{{ article.seuilalerte }}</td>
+                            </tr>
+                            <tr>
+                                <th>Description :</th>
+                                <td>{{ article.description ?: 'Aucune description' }}</td>
+                            </tr>
+                        </table>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('app_article_index') }}" class="btn btn-secondary">
+                                ← Retour à la liste
+                            </a>
+                            <div>
+                                <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-warning">
+                                    ✏️ Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_article_delete', {'id': article.id}) }}" 
+                                      style="display: inline-block;" 
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                    <button class="btn btn-danger">🗑️ Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">📊 Stock actuel</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="
+                            {% if article.stockCritique %}text-danger
+                            {% elseif article.stockEnAlerte %}text-warning
+                            {% else %}text-success{% endif %}
+                        ">
+                            {{ article.stockActuel }}
+                        </h2>
+                        {% if article.stockCritique %}
+                            <div class="alert alert-danger">
+                                ⚠️ Stock en dessous du seuil d'alerte !
+                            </div>
+                        {% elseif article.stockEnAlerte %}
+                            <div class="alert alert-warning">
+                                ⚠️ Stock faible, pensez à réapprovisionner
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">🔗 Actions rapides</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ path('app_entreestock_new') }}?article={{ article.id }}" 
+                           class="btn btn-success btn-sm w-100 mb-2">
+                            📥 Nouvelle entrée
+                        </a>
+                        <a href="{{ path('app_sortiestock_new') }}?article={{ article.id }}" 
+                           class="btn btn-danger btn-sm w-100">
+                            📤 Nouvelle sortie
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historique des mouvements -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">📋 Historique des mouvements</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-success">📥 Entrées en stock</h6>
+                                {% if article.entreestocks|length > 0 %}
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Quantité</th>
+                                                    <th>Prix unitaire</th>
+                                                    <th>Fournisseur</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for entree in article.entreestocks %}
+                                                <tr>
+                                                    <td>{{ entree.dateentree|date('d/m/Y') }}</td>
+                                                    <td>{{ entree.quantite }}</td>
+                                                    <td>{{ entree.prixu }}€</td>
+                                                    <td>{{ entree.fournisseur }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Aucune entrée enregistrée.</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-danger">📤 Sorties de stock</h6>
+                                {% if article.sortiestocks|length > 0 %}
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Quantité</th>
+                                                    <th>Technicien</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for sortie in article.sortiestocks %}
+                                                <tr>
+                                                    <td>{{ sortie.datesortie|date('d/m/Y') }}</td>
+                                                    <td>{{ sortie.quantite }}</td>
+                                                    <td>{{ sortie.technicien }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Aucune sortie enregistrée.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

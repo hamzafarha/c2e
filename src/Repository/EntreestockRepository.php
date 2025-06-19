@@ -16,28 +16,43 @@ class EntreestockRepository extends ServiceEntityRepository
         parent::__construct($registry, Entreestock::class);
     }
 
-    //    /**
-    //     * @return Entreestock[] Returns an array of Entreestock objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Trouve les dernières entrées avec leurs articles
+     */
+    public function findRecentWithArticles(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.idart', 'a')
+            ->addSelect('a')
+            ->orderBy('e.dateentree', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Entreestock
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Calcule la valeur totale du stock
+     */
+    public function getTotalStockValue(): float
+    {
+        $result = $this->createQueryBuilder('e')
+            ->select('SUM(e.quantite * e.prixu) as total')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result ?: 0.0;
+    }
+
+    /**
+     * Trouve les entrées par article
+     */
+    public function findByArticle(int $articleId): array
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.idart = :articleId')
+            ->setParameter('articleId', $articleId)
+            ->orderBy('e.dateentree', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

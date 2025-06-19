@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Entrée #{{ entreestock.id }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0">✏️ Modifier l'entrée de stock #{{ entreestock.id }}</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.idart, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.idart) }}
+                                {{ form_errors(form.idart) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.dateentree, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.dateentree) }}
+                                {{ form_errors(form.dateentree) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.quantite, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.quantite) }}
+                                {{ form_errors(form.quantite) }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.prixu, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.prixu) }}
+                                {{ form_errors(form.prixu) }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Total estimé</label>
+                                <input type="text" class="form-control" id="total-estimate" readonly
+                                       value="{{ (entreestock.quantite * entreestock.prixu)|number_format(2, '.', '') }}€">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.fournisseur, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.fournisseur) }}
+                            {{ form_errors(form.fournisseur) }}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_entreestock_show', {'id': entreestock.id}) }}" class="btn btn-secondary">
+                                ← Annuler
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                💾 Mettre à jour
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantiteInput = document.querySelector('#entreestock_quantite');
+            const prixInput = document.querySelector('#entreestock_prixu');
+            const totalInput = document.querySelector('#total-estimate');
+
+            function updateTotal() {
+                const quantite = parseFloat(quantiteInput.value) || 0;
+                const prix = parseFloat(prixInput.value) || 0;
+                const total = quantite * prix;
+                totalInput.value = total.toFixed(2) + '€';
+            }
+
+            quantiteInput.addEventListener('input', updateTotal);
+            prixInput.addEventListener('input', updateTotal);
+        });
+    </script>
+{% endblock %}

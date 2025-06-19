@@ -157,4 +157,63 @@ class Article
 
         return $this;
     }
+
+    /**
+     * Calcule le stock actuel de l'article
+     */
+    public function getStockActuel(): int
+    {
+        $stockTotal = 0;
+
+        // Ajouter les entrées
+        foreach ($this->entreestocks as $entree) {
+            $stockTotal += $entree->getQuantite();
+        }
+
+        // Soustraire les sorties
+        foreach ($this->sortiestocks as $sortie) {
+            $stockTotal -= $sortie->getQuantite();
+        }
+
+        return $stockTotal;
+    }
+
+    /**
+     * Vérifie si le stock est en dessous du seuil d'alerte
+     */
+    public function isStockCritique(): bool
+    {
+        return $this->getStockActuel() <= $this->seuilalerte;
+    }
+
+    /**
+     * Vérifie si le stock est en alerte (proche du seuil)
+     */
+    public function isStockEnAlerte(): bool
+    {
+        $stockActuel = $this->getStockActuel();
+        return $stockActuel > $this->seuilalerte && $stockActuel <= ($this->seuilalerte * 1.5);
+    }
+
+    /**
+     * Retourne la classe CSS Bootstrap appropriée pour l'affichage du stock
+     */
+    public function getStockBadgeClass(): string
+    {
+        if ($this->isStockCritique()) {
+            return 'bg-danger';
+        } elseif ($this->isStockEnAlerte()) {
+            return 'bg-warning text-dark';
+        } else {
+            return 'bg-success';
+        }
+    }
+
+    /**
+     * Pour l'affichage dans les formulaires
+     */
+    public function __toString(): string
+    {
+        return $this->refart . ' - ' . $this->nomart . ' (Stock: ' . $this->getStockActuel() . ')';
+    }
 }

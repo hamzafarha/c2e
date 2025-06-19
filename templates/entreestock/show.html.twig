@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entrée de Stock #{{ entreestock.id }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">📥 Détails de l'entrée de stock #{{ entreestock.id }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="30%">ID :</th>
+                                <td>{{ entreestock.id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Article :</th>
+                                <td>
+                                    <a href="{{ path('app_article_show', {'id': entreestock.idart.id}) }}" class="text-decoration-none">
+                                        <strong>{{ entreestock.idart.refart }}</strong> - {{ entreestock.idart.nomart }}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date d'entrée :</th>
+                                <td>{{ entreestock.dateentree|date('d/m/Y') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Quantité :</th>
+                                <td><span class="badge bg-success fs-6">{{ entreestock.quantite }}</span></td>
+                            </tr>
+                            <tr>
+                                <th>Prix unitaire :</th>
+                                <td>{{ entreestock.prixu }}€</td>
+                            </tr>
+                            <tr>
+                                <th>Total :</th>
+                                <td><strong class="text-success">{{ (entreestock.quantite * entreestock.prixu)|number_format(2, ',', ' ') }}€</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Fournisseur :</th>
+                                <td>{{ entreestock.fournisseur }}</td>
+                            </tr>
+                        </table>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('app_entreestock_index') }}" class="btn btn-secondary">
+                                ← Retour à la liste
+                            </a>
+                            <div>
+                                <a href="{{ path('app_entreestock_edit', {'id': entreestock.id}) }}" class="btn btn-warning">
+                                    ✏️ Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_entreestock_delete', {'id': entreestock.id}) }}" 
+                                      style="display: inline-block;" 
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entreestock.id) }}">
+                                    <button class="btn btn-danger">🗑️ Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

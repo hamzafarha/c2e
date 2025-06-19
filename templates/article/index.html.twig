@@ -1,20 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ArticleController!{% endblock %}
+{% block title %}Liste des Articles
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+	<div class="container mt-5">
+		<h1 class="mb-4">📦 Liste des Articles</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+		<div class="mb-3 text-end">
+			<a href="{{ path('app_article_new') }}" class="btn btn-success">
+				➕ Ajouter un article
+			</a>
+		</div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/user/c2e_app/src/Controller/ArticleController.php</code></li>
-        <li>Your template at <code>C:/Users/user/c2e_app/templates/article/index.html.twig</code></li>
-    </ul>
-</div>
+		<table class="table table-bordered table-hover table-striped">
+			<thead class="table-dark">
+				<tr>
+					<th>#</th>
+					<th>Référence</th>
+					<th>Nom</th>
+					<th>Seuil d'alerte</th>
+					<th>Description</th>
+					<th>Stock actuel</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for article in articles %}
+					<tr>
+						<td>{{ article.id }}</td>
+						<td>
+							<strong>{{ article.refart }}</strong>
+						</td>
+						<td>{{ article.nomart }}</td>
+						<td>{{ article.seuilalerte }}</td>
+						<td>{{ article.description|slice(0, 50) }}
+							{% if article.description|length > 50 %}...
+							{% endif %}
+						</td>
+						<td>
+							<span class="badge {{ article.stockBadgeClass }}">{{ article.stockActuel }}</span>
+							{% if article.stockCritique %}
+								<i class="bi bi-exclamation-triangle-fill text-danger ms-1" title="Stock critique !"></i>
+							{% endif %}
+						</td>
+						<td>
+							<a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-primary">🔍 Détail</a>
+							<a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+							<a href="{{ path('app_entreestock_new') }}?article={{ article.id }}" class="btn btn-sm btn-success">📥 Entrée</a>
+							<a href="{{ path('app_sortiestock_new') }}?article={{ article.id }}" class="btn btn-sm btn-danger">📤 Sortie</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="7" class="text-center text-muted">Aucun article trouvé.</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}

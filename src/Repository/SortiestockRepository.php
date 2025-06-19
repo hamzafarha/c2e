@@ -16,28 +16,58 @@ class SortiestockRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortiestock::class);
     }
 
-    //    /**
-    //     * @return Sortiestock[] Returns an array of Sortiestock objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Trouve les dernières sorties avec leurs articles
+     */
+    public function findRecentWithArticles(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.idart', 'a')
+            ->addSelect('a')
+            ->orderBy('s.datesortie', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Sortiestock
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Calcule la quantité totale sortie
+     */
+    public function getTotalQuantitySortie(): int
+    {
+        $result = $this->createQueryBuilder('s')
+            ->select('SUM(s.quantite) as total')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result ?: 0;
+    }
+
+    /**
+     * Trouve les sorties par article
+     */
+    public function findByArticle(int $articleId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.idart = :articleId')
+            ->setParameter('articleId', $articleId)
+            ->orderBy('s.datesortie', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve les sorties par technicien
+     */
+    public function findByTechnicien(string $technicien): array
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.idart', 'a')
+            ->addSelect('a')
+            ->where('s.technicien = :technicien')
+            ->setParameter('technicien', $technicien)
+            ->orderBy('s.datesortie', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

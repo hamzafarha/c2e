@@ -1,0 +1,209 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord - C2E{% endblock %}
+
+{% block body %}
+    <div class="container-fluid mt-4">
+        <h1 class="mb-4">📊 Tableau de Bord</h1>
+
+        <!-- Statistiques générales -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ stats.total_articles }}</h4>
+                                <p class="mb-0">Articles</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-box-seam fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ stats.total_equipements }}</h4>
+                                <p class="mb-0">Équipements</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-gear-fill fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ stats.articles_stock_critique }}</h4>
+                                <p class="mb-0">Stock critique</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-exclamation-triangle-fill fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ stats.valeur_stock_total|number_format(0, ',', ' ') }}€</h4>
+                                <p class="mb-0">Valeur stock</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-currency-euro fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Articles en stock critique -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">⚠️ Articles en stock critique</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if articles_critiques|length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Référence</th>
+                                            <th>Article</th>
+                                            <th>Stock</th>
+                                            <th>Seuil</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for article in articles_critiques %}
+                                        <tr>
+                                            <td><strong>{{ article.refart }}</strong></td>
+                                            <td>{{ article.nomart }}</td>
+                                            <td><span class="badge bg-danger">{{ article.stockActuel }}</span></td>
+                                            <td>{{ article.seuilalerte }}</td>
+                                            <td>
+                                                <a href="{{ path('app_entreestock_new', {'article': article.id}) }}" 
+                                                   class="btn btn-sm btn-success">📥 Réappro</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted">
+                                <i class="bi bi-check-circle fs-1 text-success"></i>
+                                <p class="mt-2">Aucun article en stock critique</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dernières activités -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">📋 Dernières activités</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-success">📥 Dernières entrées</h6>
+                        {% if dernieres_entrees|length > 0 %}
+                            <ul class="list-unstyled">
+                                {% for entree in dernieres_entrees %}
+                                <li class="mb-2">
+                                    <small class="text-muted">{{ entree.dateentree|date('d/m/Y') }}</small><br>
+                                    <strong>{{ entree.idart.refart }}</strong> - {{ entree.quantite }} unités
+                                    <span class="text-muted">({{ entree.fournisseur }})</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">Aucune entrée récente</p>
+                        {% endif %}
+
+                        <hr>
+
+                        <h6 class="text-danger">📤 Dernières sorties</h6>
+                        {% if dernieres_sorties|length > 0 %}
+                            <ul class="list-unstyled">
+                                {% for sortie in dernieres_sorties %}
+                                <li class="mb-2">
+                                    <small class="text-muted">{{ sortie.datesortie|date('d/m/Y') }}</small><br>
+                                    <strong>{{ sortie.idart.refart }}</strong> - {{ sortie.quantite }} unités
+                                    <span class="text-muted">({{ sortie.technicien }})</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">Aucune sortie récente</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">🚀 Actions rapides</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="{{ path('app_article_new') }}" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-circle me-2"></i>Nouvel Article
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{{ path('app_entreestock_new') }}" class="btn btn-success w-100">
+                                    <i class="bi bi-box-arrow-in-down me-2"></i>Entrée Stock
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{{ path('app_sortiestock_new') }}" class="btn btn-danger w-100">
+                                    <i class="bi bi-box-arrow-up me-2"></i>Sortie Stock
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{{ path('app_equipement_new') }}" class="btn btn-warning w-100">
+                                    <i class="bi bi-gear me-2"></i>Nouvel Équipement
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 mb-2">
+                                <a href="{{ path('app_dashboard_rapport_stock') }}" class="btn btn-info w-100">
+                                    <i class="bi bi-graph-up me-2"></i>Rapport de Stock Détaillé
+                                </a>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <a href="{{ path('app_article_index') }}" class="btn btn-secondary w-100">
+                                    <i class="bi bi-list me-2"></i>Voir tous les Articles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

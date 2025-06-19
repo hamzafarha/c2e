@@ -16,28 +16,44 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-    //    /**
-    //     * @return Article[] Returns an array of Article objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Trouve tous les articles avec leurs mouvements de stock
+     */
+    public function findAllWithStock(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.entreestocks', 'e')
+            ->leftJoin('a.sortiestocks', 's')
+            ->addSelect('e', 's')
+            ->orderBy('a.refart', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Article
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Trouve les articles avec un stock critique (en dessous du seuil d'alerte)
+     */
+    public function findArticlesStockCritique(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.entreestocks', 'e')
+            ->leftJoin('a.sortiestocks', 's')
+            ->addSelect('e', 's')
+            ->orderBy('a.refart', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recherche d'articles par référence ou nom
+     */
+    public function findBySearch(string $search): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.refart LIKE :search OR a.nomart LIKE :search')
+            ->setParameter('search', '%' . $search . '%')
+            ->orderBy('a.refart', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

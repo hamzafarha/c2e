@@ -1,20 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SortiestockController!{% endblock %}
+{% block title %}Sorties de Stock{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container mt-5">
+        <h1 class="mb-4">📤 Sorties de Stock</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <div class="mb-3 text-end">
+            <a href="{{ path('app_sortiestock_new') }}" class="btn btn-danger">
+                ➕ Nouvelle sortie
+            </a>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/user/c2e_app/src/Controller/SortiestockController.php</code></li>
-        <li>Your template at <code>C:/Users/user/c2e_app/templates/sortiestock/index.html.twig</code></li>
-    </ul>
-</div>
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Date de sortie</th>
+                    <th>Article</th>
+                    <th>Référence</th>
+                    <th>Quantité</th>
+                    <th>Technicien</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for sortiestock in sortiestocks %}
+                <tr>
+                    <td>{{ sortiestock.id }}</td>
+                    <td>{{ sortiestock.datesortie|date('d/m/Y') }}</td>
+                    <td>{{ sortiestock.idart.nomart }}</td>
+                    <td><strong>{{ sortiestock.idart.refart }}</strong></td>
+                    <td><span class="badge bg-danger">-{{ sortiestock.quantite }}</span></td>
+                    <td>{{ sortiestock.technicien }}</td>
+                    <td>
+                        <a href="{{ path('app_sortiestock_show', {'id': sortiestock.id}) }}"
+                           class="btn btn-sm btn-primary">🔍 Détail</a>
+                        <a href="{{ path('app_sortiestock_edit', {'id': sortiestock.id}) }}"
+                           class="btn btn-sm btn-warning">✏️ Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">Aucune sortie de stock trouvée.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if sortiestocks|length > 0 %}
+            {% set totalQuantity = 0 %}
+            {% for sortiestock in sortiestocks %}
+                {% set totalQuantity = totalQuantity + sortiestock.quantite %}
+            {% endfor %}
+            <div class="alert alert-warning">
+                <strong>📊 Total des quantités sorties : {{ totalQuantity }}</strong>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

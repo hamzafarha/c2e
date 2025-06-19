@@ -1,20 +1,65 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EntreestockController!{% endblock %}
+{% block title %}Entrées de Stock{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container mt-5">
+        <h1 class="mb-4">📥 Entrées de Stock</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <div class="mb-3 text-end">
+            <a href="{{ path('app_entreestock_new') }}" class="btn btn-success">
+                ➕ Nouvelle entrée
+            </a>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/user/c2e_app/src/Controller/EntreestockController.php</code></li>
-        <li>Your template at <code>C:/Users/user/c2e_app/templates/entreestock/index.html.twig</code></li>
-    </ul>
-</div>
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Date d'entrée</th>
+                    <th>Article</th>
+                    <th>Référence</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Total</th>
+                    <th>Fournisseur</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entreestock in entreestocks %}
+                <tr>
+                    <td>{{ entreestock.id }}</td>
+                    <td>{{ entreestock.dateentree|date('d/m/Y') }}</td>
+                    <td>{{ entreestock.idart.nomart }}</td>
+                    <td><strong>{{ entreestock.idart.refart }}</strong></td>
+                    <td><span class="badge bg-success">{{ entreestock.quantite }}</span></td>
+                    <td>{{ entreestock.prixu }}€</td>
+                    <td><strong>{{ (entreestock.quantite * entreestock.prixu)|number_format(2, ',', ' ') }}€</strong></td>
+                    <td>{{ entreestock.fournisseur }}</td>
+                    <td>
+                        <a href="{{ path('app_entreestock_show', {'id': entreestock.id}) }}"
+                           class="btn btn-sm btn-primary">🔍 Détail</a>
+                        <a href="{{ path('app_entreestock_edit', {'id': entreestock.id}) }}"
+                           class="btn btn-sm btn-warning">✏️ Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">Aucune entrée de stock trouvée.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if entreestocks|length > 0 %}
+            {% set totalValue = 0 %}
+            {% for entreestock in entreestocks %}
+                {% set totalValue = totalValue + (entreestock.quantite * entreestock.prixu) %}
+            {% endfor %}
+            <div class="alert alert-info">
+                <strong>💰 Valeur totale des entrées : {{ totalValue|number_format(2, ',', ' ') }}€</strong>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
