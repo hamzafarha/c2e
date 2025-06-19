@@ -29,7 +29,7 @@ class Equipement
 
     #[ORM\Column(length: 255)]
     private ?string $modeleeq = null;
-
+    
     #[ORM\Column(length: 255)]
     private ?string $numserieeq = null;
 
