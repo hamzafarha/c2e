@@ -26,12 +26,17 @@ class Intervention
     #[ORM\Column(length: 255)]
     private ?string $etatapres = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prochainedate = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $prochainedate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'interventions')]
-    #[ORM\JoinColumn(name: 'ideq', referencedColumnName: 'ideq', nullable: false)]
-    private ?Equipement $equipement = null;
+    
+    #[ORM\ManyToOne(targetEntity: Equipement::class)]
+     #[ORM\JoinColumn(name: 'ideq', referencedColumnName: 'ideq', nullable: false)]
+private ?Equipement $equipement = null;
+
+   
+    
+
 
     public function getIdint(): ?int
     {
@@ -86,19 +91,19 @@ class Intervention
         return $this;
     }
 
-    public function getProchainedate(): ?string
+    public function getProchainedate():?\DateTimeInterface
     {
         return $this->prochainedate;
     }
 
-    public function setProchainedate(string $prochainedate): static
+    public function setProchainedate(?\DateTimeInterface $prochainedate): static
     {
         $this->prochainedate = $prochainedate;
 
         return $this;
     }
 
-    public function getEquipement(): ?int
+    public function getEquipement(): ?Equipement
     {
         return $this->equipement;
     }

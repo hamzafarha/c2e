@@ -8,6 +8,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
+
 
 class InterventionForm extends AbstractType
 {
@@ -15,15 +19,24 @@ class InterventionForm extends AbstractType
     {
         $builder
             ->add('dateint')
-            ->add('typeint')
+           ->add('typeint', ChoiceType::class, [
+            'label' => 'Type d’intervention',
+            'choices' => [
+                'Préventif' => 'préventif',
+                'Curatif' => 'curatif',
+            ],
+            'placeholder' => 'Choisir un type',
+            'attr' => ['class' => 'form-select', 'id' => 'typeint-select']
+        ])
             ->add('technicien')
             ->add('etatapres')
-            ->add('prochainedate')
-            ->add('equipement', EntityType::class, [
-                'class' => Equipement::class,
-                'choice_label' => 'id',
-            ])
-        ;
+           ->add('prochainedate', DateType::class, [
+    'widget' => 'single_text',
+    'label' => 'Prochaine intervention',
+    'attr' => ['class' => 'form-control', 'id' => 'prochaine-date-field']
+])
+    
+       ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
