@@ -1,11 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Equipement{% endblock %}
+{% block title %}Ajouter un Équipement{% endblock %}
 
 {% block body %}
-    <h1>Create new Equipement</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4">🛠️ Ajouter un Nouvel Équipement</h1>
 
-    {{ include('equipement/_form.html.twig') }}
+        <div class="card shadow p-4 rounded">
+            {{ include('equipement/_form.html.twig') }}
+        </div>
 
-    <a href="{{ path('app_equipement_index') }}">back to list</a>
+        <div class="mt-3">
+            <a href="{{ path('app_equipement_index') }}" class="btn btn-secondary">
+                ⬅️ Retour à la liste
+            </a>
+        </div>
+    </div>
 {% endblock %}

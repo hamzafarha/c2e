@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Intervention;
 use App\Form\InterventionForm;
 use App\Repository\InterventionRepository;
+use App\Repository\EquipementRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,25 +24,35 @@ final class InterventionController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_intervention_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $intervention = new Intervention();
-        $form = $this->createForm(InterventionForm::class, $intervention);
-        $form->handleRequest($request);
+    #[Route('/new/{ideq?}', name: 'app_intervention_new', methods: ['GET', 'POST'])]
+public function new(Request $request, EntityManagerInterface $entityManager, ?int $ideq = null, EquipementRepository $equipementRepository): Response
+{
+    $intervention = new Intervention();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($intervention);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_intervention_index', [], Response::HTTP_SEE_OTHER);
+    if ($ideq) {
+        $equipement = $equipementRepository->find($ideq);
+        if ($equipement) {
+            $intervention->setEquipement($equipement);
         }
-
-        return $this->render('intervention/new.html.twig', [
-            'intervention' => $intervention,
-            'form' => $form,
-        ]);
     }
+
+    $form = $this->createForm(InterventionForm::class, $intervention);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($intervention);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_intervention_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+   return $this->render('intervention/new.html.twig', [
+    'intervention' => $intervention,
+    'form' => $form,
+    'equipement' => $equipement ?? null, // Passe l’équipement à la vue
+]);
+
+}
 
     #[Route('/{idint}', name: 'app_intervention_show', methods: ['GET'])]
     public function show(Intervention $intervention): Response

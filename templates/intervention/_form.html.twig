@@ -1,4 +1,36 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        {{ form_label(form.dateint) }}
+        {{ form_widget(form.dateint, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_label(form.typeint) }}
+        {{ form_widget(form.typeint) }}
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        {{ form_label(form.technicien) }}
+        {{ form_widget(form.technicien, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_label(form.etatapres) }}
+        {{ form_widget(form.etatapres, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+
+<div class="row mb-3" id="prochaine-date-row">
+    <div class="col-md-6">
+        {{ form_label(form.prochainedate) }}
+        {{ form_widget(form.prochainedate, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+
+<div class="text-end mt-4">
+    <button class="btn btn-success">✅ Enregistrer l’intervention</button>
+</div>
+
 {{ form_end(form) }}
