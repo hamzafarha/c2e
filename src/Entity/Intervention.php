@@ -31,8 +31,8 @@ class Intervention
 
     
     #[ORM\ManyToOne(targetEntity: Equipement::class)]
-     #[ORM\JoinColumn(name: 'ideq', referencedColumnName: 'ideq', nullable: false)]
-private ?Equipement $equipement = null;
+    #[ORM\JoinColumn(name: 'ideq', referencedColumnName: 'ideq', nullable: false)]
+    private ?Equipement $equipement = null;
 
    
     
