@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Intervention{% endblock %}
+
+{% block body %}
+    <h1>Intervention</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Idint</th>
+                <td>{{ intervention.idint }}</td>
+            </tr>
+            <tr>
+                <th>Dateint</th>
+                <td>{{ intervention.dateint ? intervention.dateint|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Typeint</th>
+                <td>{{ intervention.typeint }}</td>
+            </tr>
+            <tr>
+                <th>Technicien</th>
+                <td>{{ intervention.technicien }}</td>
+            </tr>
+            <tr>
+                <th>Etatapres</th>
+                <td>{{ intervention.etatapres }}</td>
+            </tr>
+            <tr>
+                <th>Prochainedate</th>
+                <td>{{ intervention.prochainedate }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_intervention_index') }}">back to list</a>
+
+    <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}">edit</a>
+
+    {{ include('intervention/_delete_form.html.twig') }}
+{% endblock %}
