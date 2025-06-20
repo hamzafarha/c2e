@@ -66,6 +66,21 @@ class DashboardController extends AbstractController
             $sorties[] = $sortiestockRepository->count(['idart' => $article]);
         }
         
+        // Statistiques équipements par type
+        $equipements = $equipementRepository->findAll();
+        $types = [];
+        $etats = [];
+        foreach ($equipements as $eq) {
+            $type = $eq->getTypeeq() ?: 'Inconnu';
+            $etat = $eq->getEtat() ?: 'Inconnu';
+            $types[$type] = ($types[$type] ?? 0) + 1;
+            $etats[$etat] = ($etats[$etat] ?? 0) + 1;
+        }
+        $typeLabels = array_keys($types);
+        $typeValues = array_values($types);
+        $etatLabels = array_keys($etats);
+        $etatValues = array_values($etats);
+        
         return $this->render('dashboard/index.html.twig', [
             'stats' => $stats,
             'articles_critiques' => $articlesCritiques,
@@ -74,6 +89,12 @@ class DashboardController extends AbstractController
             'labels' => $labels,
             'entrees' => $entrees,
             'sorties' => $sorties,
+            'equip_types' => $types,
+            'equip_etats' => $etats,
+            'type_labels' => $typeLabels,
+            'type_values' => $typeValues,
+            'etat_labels' => $etatLabels,
+            'etat_values' => $etatValues,
         ]);
     }
 
