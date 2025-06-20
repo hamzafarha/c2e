@@ -1,0 +1,17 @@
+<h1>Liste des articles</h1>
+<table border="1" cellspacing="0" cellpadding="5">
+    <tr>
+        <th>Nom</th>
+        <th>Référence</th>
+        <th>Seuil d'alerte</th>
+        <th>Description</th>
+    </tr>
+    {% for article in articles %}
+    <tr>
+        <td>{{ article.nomart }}</td>
+        <td>{{ article.getRefart() }}</td>
+        <td>{{ article.seuilalerte }}</td>
+        <td>{{ article.description }}</td>
+    </tr>
+    {% endfor %}
+</table> 

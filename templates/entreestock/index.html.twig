@@ -34,8 +34,8 @@
                     <td>{{ entreestock.idart.nomart }}</td>
                     <td><strong>{{ entreestock.idart.refart }}</strong></td>
                     <td><span class="badge bg-success">{{ entreestock.quantite }}</span></td>
-                    <td>{{ entreestock.prixu }} DT</td>
-                    <td><strong>{{ (entreestock.quantite * entreestock.prixu)|number_format(2, ',', ' ') }} DT</strong></td>
+                    <td>{{ entreestock.prixu }}€</td>
+                    <td><strong>{{ (entreestock.quantite * entreestock.prixu)|number_format(2, ',', ' ') }}€</strong></td>
                     <td>{{ entreestock.fournisseur }}</td>
                     <td>
                         <a href="{{ path('app_entreestock_show', {'id': entreestock.id}) }}"
@@ -58,7 +58,7 @@
                 {% set totalValue = totalValue + (entreestock.quantite * entreestock.prixu) %}
             {% endfor %}
             <div class="alert alert-info">
-                <strong>💰 Valeur totale des entrées : {{ totalValue|number_format(2, ',', ' ') }} DT</strong>
+                <strong>💰 Valeur totale des entrées : {{ totalValue|number_format(2, ',', ' ') }}€</strong>
             </div>
         {% endif %}
     </div>

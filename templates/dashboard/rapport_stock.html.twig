@@ -25,7 +25,7 @@
             <div class="col-md-4">
                 <div class="card bg-success text-white">
                     <div class="card-body text-center">
-                        <h3>{{ total_valeur_stock|number_format(0, ',', ' ') }} DT</h3>
+                        <h3>{{ total_valeur_stock|number_format(0, ',', ' ') }}€</h3>
                         <p class="mb-0">Valeur totale du stock</p>
                     </div>
                 </div>
@@ -80,8 +80,8 @@
                                 <td>{{ data.article.seuilalerte }}</td>
                                 <td><span class="badge bg-success">{{ data.total_entrees }}</span></td>
                                 <td><span class="badge bg-danger">{{ data.total_sorties }}</span></td>
-                                <td>{{ data.prix_moyen|number_format(2, ',', ' ') }} DT</td>
-                                <td><strong>{{ data.valeur_stock|number_format(2, ',', ' ') }} DT</strong></td>
+                                <td>{{ data.prix_moyen|number_format(2, ',', ' ') }}€</td>
+                                <td><strong>{{ data.valeur_stock|number_format(2, ',', ' ') }}€</strong></td>
                                 <td>
                                     {% if data.article.stockCritique %}
                                         <span class="badge bg-danger">Critique</span>
@@ -97,7 +97,7 @@
                         <tfoot class="table-dark">
                             <tr>
                                 <th colspan="7" class="text-end">Total valeur stock :</th>
-                                <th>{{ total_valeur_stock|number_format(2, ',', ' ') }} DT</th>
+                                <th>{{ total_valeur_stock|number_format(2, ',', ' ') }}€</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -117,7 +117,7 @@
                         {% for data in rapport_data|slice(0, 5) %}
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><strong>{{ data.article.refart }}</strong> - {{ data.article.nomart|slice(0, 30) }}</span>
-                            <span class="badge bg-primary">{{ data.valeur_stock|number_format(0, ',', ' ') }} DT</span>
+                            <span class="badge bg-primary">{{ data.valeur_stock|number_format(0, ',', ' ') }}€</span>
                         </div>
                         {% endfor %}
                     </div>
