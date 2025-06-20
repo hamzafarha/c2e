@@ -56,6 +56,7 @@ class Equipement
     {
         return $this->typeeq;
     }
+    
 
     public function setTypeeq(string $typeeq): static
     {
@@ -170,4 +171,5 @@ class Equipement
 
         return $this;
     }
+
 }
