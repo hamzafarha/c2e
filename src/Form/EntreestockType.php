@@ -44,7 +44,7 @@ class EntreestockType extends AbstractType
                 ]
             ])
             ->add('prixu', NumberType::class, [
-                'label' => 'Prix unitaire (€)',
+                'label' => 'Prix unitaire (DT)',
                 'scale' => 2,
                 'attr' => [
                     'class' => 'form-control',

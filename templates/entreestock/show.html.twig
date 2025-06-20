@@ -34,11 +34,11 @@
                             </tr>
                             <tr>
                                 <th>Prix unitaire :</th>
-                                <td>{{ entreestock.prixu }}€</td>
+                                <td>{{ entreestock.prixu|number_format(2, ',', ' ') }} DT</td>
                             </tr>
                             <tr>
                                 <th>Total :</th>
-                                <td><strong class="text-success">{{ (entreestock.quantite * entreestock.prixu)|number_format(2, ',', ' ') }}€</strong></td>
+                                <td><strong>{{ (entreestock.quantite * entreestock.prixu)|number_format(2, ',', ' ') }} DT</strong></td>
                             </tr>
                             <tr>
                                 <th>Fournisseur :</th>
