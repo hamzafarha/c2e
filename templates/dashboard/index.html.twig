@@ -109,6 +109,60 @@
         });
         </script>
 
+        <!-- Statistiques équipements (par type et par état) -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-pie-chart"></i> Répartition des équipements par type
+                    </div>
+                    <div class="card-body">
+                        <canvas id="equipTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-pie-chart"></i> Répartition des équipements par état
+                    </div>
+                    <div class="card-body">
+                        <canvas id="equipEtatChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        // Chart équipements par type
+        const equipTypeCtx = document.getElementById('equipTypeChart').getContext('2d');
+        new Chart(equipTypeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ type_labels|json_encode|raw }},
+                datasets: [{
+                    data: {{ type_values|json_encode|raw }},
+                    backgroundColor: [
+                        '#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#6610f2', '#fd7e14'
+                    ]
+                }]
+            }
+        });
+        // Chart équipements par état
+        const equipEtatCtx = document.getElementById('equipEtatChart').getContext('2d');
+        new Chart(equipEtatCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ etat_labels|json_encode|raw }},
+                datasets: [{
+                    data: {{ etat_values|json_encode|raw }},
+                    backgroundColor: [
+                        '#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#6610f2', '#fd7e14'
+                    ]
+                }]
+            }
+        });
+        </script>
+
         <div class="row">
             <!-- Articles en stock critique -->
             <div class="col-md-6">
