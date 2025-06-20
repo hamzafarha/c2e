@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sorties de Stock{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">📤 Sorties de Stock</h1>
+
+        <div class="mb-3 text-end">
+            <a href="{{ path('app_sortiestock_new') }}" class="btn btn-danger">
+                ➕ Nouvelle sortie
+            </a>
+        </div>
+
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Date de sortie</th>
+                    <th>Article</th>
+                    <th>Référence</th>
+                    <th>Quantité</th>
+                    <th>Technicien</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for sortiestock in sortiestocks %}
+                <tr>
+                    <td>{{ sortiestock.id }}</td>
+                    <td>{{ sortiestock.datesortie|date('d/m/Y') }}</td>
+                    <td>{{ sortiestock.idart.nomart }}</td>
+                    <td><strong>{{ sortiestock.idart.refart }}</strong></td>
+                    <td><span class="badge bg-danger">-{{ sortiestock.quantite }}</span></td>
+                    <td>{{ sortiestock.technicien }}</td>
+                    <td>
+                        <a href="{{ path('app_sortiestock_show', {'id': sortiestock.id}) }}"
+                           class="btn btn-sm btn-primary">🔍 Détails</a>
+                        <a href="{{ path('app_sortiestock_edit', {'id': sortiestock.id}) }}"
+                           class="btn btn-sm btn-warning">✏️ Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">Aucune sortie de stock trouvée.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if sortiestocks|length > 0 %}
+            {% set totalQuantity = 0 %}
+            {% for sortiestock in sortiestocks %}
+                {% set totalQuantity = totalQuantity + sortiestock.quantite %}
+            {% endfor %}
+            <div class="alert alert-warning">
+                <strong>📊 Total des quantités sorties : {{ totalQuantity }}</strong>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

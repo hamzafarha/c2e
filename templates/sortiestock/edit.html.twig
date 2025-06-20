@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Sortie #{{ sortiestock.id }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0">✏️ Modifier la sortie de stock #{{ sortiestock.id }}</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.idart, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.idart) }}
+                                {{ form_errors(form.idart) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.datesortie, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.datesortie) }}
+                                {{ form_errors(form.datesortie) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.quantite, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.quantite) }}
+                                {{ form_errors(form.quantite) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.technicien, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.technicien) }}
+                                {{ form_errors(form.technicien) }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_sortiestock_show', {'id': sortiestock.id}) }}" class="btn btn-secondary">
+                                ← Annuler
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                💾 Mettre à jour
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

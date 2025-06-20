@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Entrée de Stock{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">📥 Nouvelle entrée de stock</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.idart, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.idart) }}
+                                {{ form_errors(form.idart) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.dateentree, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.dateentree) }}
+                                {{ form_errors(form.dateentree) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.quantite, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.quantite) }}
+                                {{ form_errors(form.quantite) }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.prixu, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.prixu) }}
+                                {{ form_errors(form.prixu) }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Total estimé</label>
+                                <input type="text" class="form-control" id="total-estimate" readonly placeholder="0.00€">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.fournisseur, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.fournisseur) }}
+                            {{ form_errors(form.fournisseur) }}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_entreestock_index') }}" class="btn btn-secondary">
+                                ← Retour à la liste
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                💾 Enregistrer l'entrée
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantiteInput = document.querySelector('#entreestock_quantite');
+            const prixInput = document.querySelector('#entreestock_prixu');
+            const totalInput = document.querySelector('#total-estimate');
+
+            function updateTotal() {
+                const quantite = parseFloat(quantiteInput.value) || 0;
+                const prix = parseFloat(prixInput.value) || 0;
+                const total = quantite * prix;
+                totalInput.value = total.toFixed(2) + '€';
+            }
+
+            quantiteInput.addEventListener('input', updateTotal);
+            prixInput.addEventListener('input', updateTotal);
+        });
+    </script>
+{% endblock %}

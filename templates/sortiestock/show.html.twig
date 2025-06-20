@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortie de Stock #{{ sortiestock.id }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">📤 Détails de la sortie de stock #{{ sortiestock.id }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="30%">ID :</th>
+                                <td>{{ sortiestock.id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Article :</th>
+                                <td>
+                                    <a href="{{ path('app_article_show', {'id': sortiestock.idart.id}) }}" class="text-decoration-none">
+                                        <strong>{{ sortiestock.idart.refart }}</strong> - {{ sortiestock.idart.nomart }}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date de sortie :</th>
+                                <td>{{ sortiestock.datesortie|date('d/m/Y') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Quantité :</th>
+                                <td><span class="badge bg-danger fs-6">-{{ sortiestock.quantite }}</span></td>
+                            </tr>
+                            <tr>
+                                <th>Technicien :</th>
+                                <td>{{ sortiestock.technicien }}</td>
+                            </tr>
+                        </table>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('app_sortiestock_index') }}" class="btn btn-secondary">
+                                ← Retour à la liste
+                            </a>
+                            <div>
+                                <a href="{{ path('app_sortiestock_edit', {'id': sortiestock.id}) }}" class="btn btn-warning">
+                                    ✏️ Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_sortiestock_delete', {'id': sortiestock.id}) }}" 
+                                      style="display: inline-block;" 
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette sortie ?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sortiestock.id) }}">
+                                    <button class="btn btn-danger">🗑️ Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

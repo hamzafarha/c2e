@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Sortie de Stock{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">📤 Nouvelle sortie de stock</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.idart, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.idart) }}
+                                {{ form_errors(form.idart) }}
+                                <div class="form-text">
+                                    <small id="stock-info" class="text-muted"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.datesortie, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.datesortie) }}
+                                {{ form_errors(form.datesortie) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.quantite, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.quantite) }}
+                                {{ form_errors(form.quantite) }}
+                                <div class="form-text">
+                                    <small class="text-warning">⚠️ Vérifiez le stock disponible avant de valider</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.technicien, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.technicien) }}
+                                {{ form_errors(form.technicien) }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_sortiestock_index') }}" class="btn btn-secondary">
+                                ← Retour à la liste
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                💾 Enregistrer la sortie
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const articleSelect = document.querySelector('#sortiestock_idart');
+            const stockInfo = document.querySelector('#stock-info');
+            const quantiteInput = document.querySelector('#sortiestock_quantite');
+
+            // Données de stock
+            const stockData = {
+                {% for article in articles|default([]) %}
+                    {{ article.id }}: {
+                        stock: {{ article.stockActuel }},
+                        seuil: {{ article.seuilalerte }},
+                        nom: "{{ article.nomart }}",
+                        ref: "{{ article.refart }}"
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            };
+
+            function updateStockInfo() {
+                const selectedId = articleSelect.value;
+                if (selectedId && stockData[selectedId]) {
+                    const data = stockData[selectedId];
+                    let className = 'text-success';
+                    let icon = '✅';
+
+                    if (data.stock <= 0) {
+                        className = 'text-danger';
+                        icon = '❌';
+                        quantiteInput.max = 0;
+                    } else if (data.stock <= data.seuil) {
+                        className = 'text-danger';
+                        icon = '⚠️';
+                        quantiteInput.max = data.stock;
+                    } else if (data.stock <= data.seuil * 1.5) {
+                        className = 'text-warning';
+                        icon = '⚠️';
+                        quantiteInput.max = data.stock;
+                    } else {
+                        quantiteInput.max = data.stock;
+                    }
+
+                    stockInfo.innerHTML = `<span class="${className}">${icon} Stock disponible : ${data.stock} unités</span>`;
+                } else {
+                    stockInfo.innerHTML = '';
+                    quantiteInput.removeAttribute('max');
+                }
+            }
+
+            // Validation en temps réel de la quantité
+            function validateQuantity() {
+                const selectedId = articleSelect.value;
+                const quantite = parseInt(quantiteInput.value) || 0;
+
+                if (selectedId && stockData[selectedId]) {
+                    const stockDisponible = stockData[selectedId].stock;
+                    if (quantite > stockDisponible) {
+                        quantiteInput.setCustomValidity(`Quantité maximale disponible : ${stockDisponible}`);
+                        quantiteInput.classList.add('is-invalid');
+                    } else {
+                        quantiteInput.setCustomValidity('');
+                        quantiteInput.classList.remove('is-invalid');
+                    }
+                }
+            }
+
+            articleSelect.addEventListener('change', updateStockInfo);
+            quantiteInput.addEventListener('input', validateQuantity);
+            updateStockInfo(); // Initial call
+        });
+    </script>
+{% endblock %}

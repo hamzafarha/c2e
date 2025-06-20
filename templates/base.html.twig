@@ -70,6 +70,22 @@
 
                         <ul class="nav flex-column">
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_dashboard') }}">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    Tableau de Bord
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_dashboard_rapport_stock') }}">
+                                    <i class="bi bi-graph-up me-2"></i>
+                                    Rapport de Stock
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <h6 class="text-white-50 mt-3 mb-2 px-3">ÉQUIPEMENTS</h6>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ path('app_equipement_index') }}">
                                     <i class="bi bi-gear-fill me-2"></i>
                                     Équipements
@@ -80,6 +96,32 @@
                                     <i class="bi bi-tools me-2"></i>
                                     Interventions
                                 </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <h6 class="text-white-50 mt-3 mb-2 px-3">STOCK</h6>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_article_index') }}">
+                                    <i class="bi bi-box-seam me-2"></i>
+                                    Articles
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_entreestock_index') }}">
+                                    <i class="bi bi-box-arrow-in-down me-2"></i>
+                                    Entrées de stock
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_sortiestock_index') }}">
+                                    <i class="bi bi-box-arrow-up me-2"></i>
+                                    Sorties de stock
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <h6 class="text-white-50 mt-3 mb-2 px-3">ACTIONS RAPIDES</h6>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('app_equipement_new') }}">
@@ -93,6 +135,12 @@
                                     Nouvelle Intervention
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_article_new') }}">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Nouvel Article
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -100,6 +148,25 @@
                 <!-- Main content -->
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                     <div class="pt-3 pb-2 mb-3">
+                        <!-- Messages flash -->
+                        {% for type, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+                                    {% if type == 'success' %}
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                    {% elseif type == 'error' %}
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    {% elseif type == 'warning' %}
+                                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                                    {% else %}
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                    {% endif %}
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+
                         {% block body %}{% endblock %}
                     </div>
                 </main>
