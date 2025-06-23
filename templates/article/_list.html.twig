@@ -1,0 +1,27 @@
+<tbody>
+    {% for article in articles %}
+        <tr>
+            <td>{{ article.id }}</td>
+            <td><strong>{{ article.refart }}</strong></td>
+            <td>{{ article.nomart }}</td>
+            <td>{{ article.seuilalerte }}</td>
+            <td>{{ article.description|slice(0, 50) }}{% if article.description|length > 50 %}...{% endif %}</td>
+            <td>
+                <span class="badge {{ article.stockBadgeClass }}">{{ article.stockActuel }}</span>
+                {% if article.stockCritique %}
+                    <i class="bi bi-exclamation-triangle-fill text-danger ms-1" title="Stock critique !"></i>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-primary">🔍 Détails</a>
+                <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                <a href="{{ path('app_entreestock_new') }}?article={{ article.id }}" class="btn btn-sm btn-success">📥 Entrée</a>
+                <a href="{{ path('app_sortiestock_new') }}?article={{ article.id }}" class="btn btn-sm btn-danger">📤 Sortie</a>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="7" class="text-center text-muted">Aucun article trouvé.</td>
+        </tr>
+    {% endfor %}
+</tbody> 

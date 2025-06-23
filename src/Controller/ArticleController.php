@@ -15,10 +15,26 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ArticleController extends AbstractController
 {
     #[Route(name: 'app_article_index', methods: ['GET'])]
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(Request $request, ArticleRepository $articleRepository): Response
     {
+        $q = $request->query->get('q');
+        if ($q) {
+            $articles = $articleRepository->createQueryBuilder('a')
+                ->where('a.refart LIKE :q OR a.nomart LIKE :q')
+                ->setParameter('q', '%'.$q.'%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $articles = $articleRepository->findAll();
+        }
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('article/_list.html.twig', [
+                'articles' => $articles,
+            ]);
+        }
         return $this->render('article/index.html.twig', [
-            'articles' => $articleRepository->findAll(),
+            'articles' => $articles,
+            'q' => $q,
         ]);
     }
 

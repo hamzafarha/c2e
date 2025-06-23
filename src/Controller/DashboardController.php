@@ -52,6 +52,11 @@ class DashboardController extends AbstractController
             return $article->isStockCritique();
         });
         
+        // Articles en rupture de stock
+        $articlesRupture = array_filter($articles, function($article) {
+            return $article->getStockActuel() <= 0;
+        });
+        
         // Dernières entrées et sorties
         $dernieresEntrees = $entreestockRepository->findRecentWithArticles(5);
         $dernieresSorties = $sortiestockRepository->findRecentWithArticles(5);
@@ -84,6 +89,7 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/index.html.twig', [
             'stats' => $stats,
             'articles_critiques' => $articlesCritiques,
+            'articles_rupture' => $articlesRupture,
             'dernieres_entrees' => $dernieresEntrees,
             'dernieres_sorties' => $dernieresSorties,
             'labels' => $labels,
