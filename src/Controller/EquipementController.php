@@ -71,7 +71,7 @@ final class EquipementController extends AbstractController
     #[Route('/{ideq}', name: 'app_equipement_delete', methods: ['POST'])]
     public function delete(Request $request, Equipement $equipement, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$equipement->getIdeq(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$equipement->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($equipement);
             $entityManager->flush();
         }

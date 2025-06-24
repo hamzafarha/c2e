@@ -172,5 +172,39 @@
                 </main>
             </div>
         </div>
+        <div id="chatbot-widget" style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+            <div id="chatbot-messages" style="background:#fff;border:1px solid #ccc;padding:10px;width:300px;height:250px;overflow-y:auto;display:none;"></div>
+            <input id="chatbot-input" type="text" placeholder="Posez votre question..." style="width:240px;display:none;">
+            <button id="chatbot-toggle" class="btn btn-primary">🤖 Chatbot</button>
+        </div>
+        <script>
+        const widget = document.getElementById('chatbot-widget');
+        const messages = document.getElementById('chatbot-messages');
+        const input = document.getElementById('chatbot-input');
+        const toggle = document.getElementById('chatbot-toggle');
+
+        toggle.onclick = () => {
+            messages.style.display = input.style.display = (messages.style.display === 'none' ? 'block' : 'none');
+            if (input.style.display === 'block') input.focus();
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const question = this.value;
+                messages.innerHTML += `<div><b>Vous :</b> ${question}</div>`;
+                fetch('/chatbot', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({question})
+                })
+                .then(r => r.json())
+                .then(data => {
+                    messages.innerHTML += `<div><b>Bot :</b> ${data.answer}</div>`;
+                    messages.scrollTop = messages.scrollHeight;
+                });
+                this.value = '';
+            }
+        });
+        </script>
     </body>
 </html>

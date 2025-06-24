@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recommandations de Stock{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>📈 Recommandations de Stock</h1>
+
+    {% if recommandations is empty %}
+        <div class="alert alert-warning">
+            Aucune recommandation disponible pour le moment. Vérifiez les données d’entrée/sortie.
+        </div>
+    {% else %}
+        <table class="table table-bordered table-hover mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>Référence</th>
+                    <th>Consommation mensuelle</th>
+                    <th>Stock actuel</th>
+                    <th>Rupture estimée (jours)</th>
+                    <th>Suggestion de commande</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rec in recommandations %}
+                    <tr>
+                        <td>{{ rec.reference }}</td>
+                        <td>{{ rec.conso_mensuelle }}</td>
+                        <td>{{ rec.stock_actuel }}</td>
+                        <td>
+                            {% if rec.rupture_dans_jours is not null %}
+                                {{ rec.rupture_dans_jours }}
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ rec.suggestion_commande }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
