@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 
 use App\Repository\ArticleRepository;
 use App\Repository\EntreestockRepository;

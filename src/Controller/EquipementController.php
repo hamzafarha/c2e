@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/equipement')]
 final class EquipementController extends AbstractController
@@ -31,6 +34,28 @@ final class EquipementController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($equipement);
+            $entityManager->flush();
+
+            // Génération du texte à encoder dans le QR code
+            $qrText = sprintf(
+                "Nom : %s\nRéférence : %s\nModèle : %s\nNuméro de série : %s\nLocalisation : %s\nÉtat : %s",
+                $equipement->getNomeq(),
+                $equipement->getReferenceeq(),
+                $equipement->getModeleeq(),
+                $equipement->getNumserieeq(),
+                $equipement->getLocalisationeq(),
+                $equipement->getEtat()
+            );
+            $qrPath = sprintf('qr/equipement_%d.png', $equipement->getId());
+            $fullPath = $this->getParameter('kernel.project_dir') . '/public/' . $qrPath;
+
+            $builder = new Builder(
+                writer: new PngWriter(),
+                data: $qrText
+            );
+            $result = $builder->build();
+            $result->saveToFile($fullPath);
+            $equipement->setCodeQr($qrPath);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_equipement_index', [], Response::HTTP_SEE_OTHER);

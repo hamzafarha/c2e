@@ -42,6 +42,9 @@ class Equipement
     #[ORM\Column(length: 255)]
     private ?string $etat = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $codeQr = null;
+
     public function __construct()
     {
         $this->interventions = new ArrayCollection();
@@ -169,6 +172,17 @@ class Equipement
     {
         $this->etat = $etat;
 
+        return $this;
+    }
+
+    public function getCodeQr(): ?string
+    {
+        return $this->codeQr;
+    }
+
+    public function setCodeQr(?string $codeQr): static
+    {
+        $this->codeQr = $codeQr;
         return $this;
     }
 
