@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="container mt-5">
-        <h1 class="mb-4">📋 Détail de l’Équipement</h1>
+        <h1 class="mb-4">📋 Détail de l'Équipement</h1>
 
         <div class="card shadow rounded">
             <div class="card-body">
@@ -39,24 +39,30 @@
                             <td>{{ equipement.getNumserieeq() }}</td>
                         </tr>
                         <tr>
-    <th>État</th>
-    <td>
-        {% if equipement.getEtat() == 'en_service' %}
-            <span class="badge bg-success">En service</span>
-        {% elseif equipement.getEtat() == 'en_panne' %}
-            <span class="badge bg-danger">En panne</span>
-        {% elseif equipement.getEtat() == 'maintenance' %}
-            <span class="badge bg-warning text-dark">Maintenance</span>
-        {% elseif equipement.getEtat() == 'hors_service' %}
-            <span class="badge bg-secondary">Hors service</span>
-        {% else %}
-            <span class="badge bg-light text-dark">Inconnu</span>
-        {% endif %}
-    </td>
-</tr>
-
+                            <th>État</th>
+                            <td>
+                                {% if equipement.getEtat() == 'en_service' %}
+                                    <span class="badge bg-success">En service</span>
+                                {% elseif equipement.getEtat() == 'en_panne' %}
+                                    <span class="badge bg-danger">En panne</span>
+                                {% elseif equipement.getEtat() == 'maintenance' %}
+                                    <span class="badge bg-warning text-dark">Maintenance</span>
+                                {% elseif equipement.getEtat() == 'hors_service' %}
+                                    <span class="badge bg-secondary">Hors service</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">Inconnu</span>
+                                {% endif %}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
+
+                {% if equipement.getCodeQr() %}
+                    <div class="text-center my-4">
+                        <h5>QR Code de l'équipement</h5>
+                        <img src="/{{ equipement.getCodeQr() }}" alt="QR Code" style="width:180px;height:180px;" />
+                    </div>
+                {% endif %}
 
                 <div class="d-flex justify-content-between mt-4">
                     <a href="{{ path('app_equipement_index') }}" class="btn btn-secondary">
