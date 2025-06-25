@@ -16,6 +16,17 @@ class ChatbotController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $question = strtolower($data['question'] ?? '');
 
+        // Réponse aux salutations
+        if (preg_match('/\b(bonjour|salut|hello|coucou)\b/', $question)) {
+            return new JsonResponse(['answer' => "Bonjour 👋 ! Comment puis-je vous aider concernant le stock ou les équipements ?"]);
+        }
+        if (preg_match('/\bmerci\b/', $question)) {
+            return new JsonResponse(['answer' => "Avec plaisir ! N'hésitez pas si vous avez d'autres questions sur le stock."]);
+        }
+        if (preg_match('/\b(au revoir|bye|à bientôt)\b/', $question)) {
+            return new JsonResponse(['answer' => "Au revoir ! Je reste à votre disposition pour toute question sur le stock."]);
+        }
+
         // Réponse à "Que dois-je commander ce mois-ci ?"
         if (strpos($question, 'commander') !== false) {
             $json = shell_exec('C:\\Users\\user\\anaconda3\\python C:\\Users\\user\\c2e_app\\scripts\\recommandation.py 2>&1');
