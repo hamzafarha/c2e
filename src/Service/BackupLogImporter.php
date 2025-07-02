@@ -47,9 +47,9 @@ class BackupLogImporter
         $duration = $this->extractString($content, '/Duration: ([^\n]+)/i');
         $status = $this->extractString($content, '/Status: ([^\n]+)/i');
         $totalSize = $this->extractString($content, '/Total size: ([^\n]+)/i');
-        $filesProcessed = $this->extractInt($content, '/Files processed: (\d+)/i');
-        $errors = $this->extractInt($content, '/Errors: (\d+)/i');
-        $objectsDeleted = $this->extractInt($content, '/Objects deleted: (\d+)/i', true);
+        $filesProcessed = $this->extractInt($content, '/Files processed: (\\d+)/i');
+        $errors = $this->extractInt($content, '/Errors: (\\d+)/i');
+        $objectsDeleted = $this->extractInt($content, '/Objects deleted: (\\d+)/i', true);
         $sourcePath = $this->extractString($content, '/Source: ([^\n]+)/i');
         $destinationPath = $this->extractString($content, '/Destination: ([^\n]+)/i');
 
@@ -94,4 +94,4 @@ class BackupLogImporter
         }
         return $nullable ? null : 0;
     }
-} 
+}
