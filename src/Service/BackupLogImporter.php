@@ -3,6 +3,8 @@ namespace App\Service;
 
 use App\Entity\BackupLog;
 use Doctrine\ORM\EntityManagerInterface;
+use eXorus\PhpMimeMailParser\Parser as PhpMimeMailParserParser;
+use PhpMimeMailParser\Parser;
 
 class BackupLogImporter
 {
@@ -34,22 +36,38 @@ class BackupLogImporter
     }
 
     /**
-     * Parse un fichier de log Iperius et retourne un BackupLog ou null
-     * @param string $filePath
+     * Importe un rapport de sauvegarde depuis un fichier .eml
+     * @param string $emlPath
      * @return BackupLog|null
      */
-    public function parseLogFile(string $filePath): ?BackupLog
+    public function importFromEml(string $emlPath): ?BackupLog
     {
-        $content = file_get_contents($filePath);
-        // Parser simple, à adapter selon le format réel
+        $parser = new PhpMimeMailParserParser();
+        $parser->setPath($emlPath);
+        $body = $parser->getMessageBody('text'); // ou 'html' si besoin
+        $log = $this->parseLogContent($body);
+        if ($log) {
+            $this->em->persist($log);
+            $this->em->flush();
+        }
+        return $log;
+    }
+
+    /**
+     * Parse le contenu brut d'un rapport de sauvegarde (texte ou HTML)
+     * @param string $content
+     * @return BackupLog|null
+     */
+    public function parseLogContent(string $content): ?BackupLog
+    {
         $startTime = $this->extractDate($content, '/Start time: ([^\n]+)/i');
         $endTime = $this->extractDate($content, '/End time: ([^\n]+)/i');
         $duration = $this->extractString($content, '/Duration: ([^\n]+)/i');
         $status = $this->extractString($content, '/Status: ([^\n]+)/i');
         $totalSize = $this->extractString($content, '/Total size: ([^\n]+)/i');
-        $filesProcessed = $this->extractInt($content, '/Files processed: (\\d+)/i');
-        $errors = $this->extractInt($content, '/Errors: (\\d+)/i');
-        $objectsDeleted = $this->extractInt($content, '/Objects deleted: (\\d+)/i', true);
+        $filesProcessed = $this->extractInt($content, '/Files processed: (\d+)/i');
+        $errors = $this->extractInt($content, '/Errors: (\d+)/i');
+        $objectsDeleted = $this->extractInt($content, '/Objects deleted: (\d+)/i', true);
         $sourcePath = $this->extractString($content, '/Source: ([^\n]+)/i');
         $destinationPath = $this->extractString($content, '/Destination: ([^\n]+)/i');
 
@@ -69,6 +87,17 @@ class BackupLogImporter
         $log->setSourcePath($sourcePath ?? '');
         $log->setDestinationPath($destinationPath ?? '');
         return $log;
+    }
+
+    /**
+     * Parse un fichier de log Iperius et retourne un BackupLog ou null
+     * @param string $filePath
+     * @return BackupLog|null
+     */
+    public function parseLogFile(string $filePath): ?BackupLog
+    {
+        $content = file_get_contents($filePath);
+        return $this->parseLogContent($content);
     }
 
     private function extractDate(string $content, string $pattern): ?\DateTime

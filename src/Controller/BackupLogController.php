@@ -8,9 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BackupLogController extends AbstractController
 {
-    /**
-     * @Route("/historique/sauvegardes", name="backup_log_index")
-     */
+    
+    #[Route('/historique/sauvegardes', name: 'backup_log_index', methods: ['GET'])]
     public function index(BackupLogRepository $backupLogRepository): Response
     {
         $logs = $backupLogRepository->findBy([], ['startTime' => 'DESC']);
@@ -18,4 +17,7 @@ class BackupLogController extends AbstractController
             'logs' => $logs,
         ]);
     }
+
+
+    
 }

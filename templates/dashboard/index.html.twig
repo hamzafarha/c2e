@@ -5,6 +5,9 @@
 {% block body %}
     <div class="container-fluid mt-4">
         <h1 class="mb-4 d-inline-block">📊 Tableau de Bord</h1>
+        <a href="{{ path('backup_log_index') }}" class="btn btn-outline-primary float-end ms-2">
+            <i class="bi bi-hdd-stack"></i> Historique des sauvegardes
+        </a>
         <div class="dropdown d-inline-block float-end me-3">
             <button class="btn btn-light position-relative" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell fs-4"></i>
