@@ -7,6 +7,7 @@ import logging
 import sys
 import os
 
+
 logging.getLogger('cmdstanpy').setLevel(logging.CRITICAL)
 logging.getLogger('prophet').setLevel(logging.CRITICAL)
 sys.stderr = open(os.devnull, 'w')

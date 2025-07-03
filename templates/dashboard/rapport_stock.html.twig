@@ -15,7 +15,7 @@
         <!-- Résumé -->
         <div class="row mb-4">
             <div class="col-md-4">
-                <div class="card bg-info text-white">
+                <div class="card bg-info text-white dashboard-stat-card">
                     <div class="card-body text-center">
                         <h3>{{ rapport_data|length }}</h3>
                         <p class="mb-0">Articles au total</p>
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card bg-success text-white">
+                <div class="card bg-success text-white dashboard-stat-card">
                     <div class="card-body text-center">
                         <h3>{{ total_valeur_stock|number_format(0, ',', ' ') }} DT</h3>
                         <p class="mb-0">Valeur totale du stock</p>
@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card bg-warning text-dark">
+                <div class="card bg-warning text-dark dashboard-stat-card">
                     <div class="card-body text-center">
                         {% set articles_critiques = 0 %}
                         {% for data in rapport_data %}
@@ -49,7 +49,7 @@
         <!-- Tableau détaillé -->
         <div class="card">
             <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">📋 Détail par article</h5>
+                <h5 class="mb-0">📋 Détails par article</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

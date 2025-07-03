@@ -5,6 +5,9 @@
 {% block body %}
     <div class="container-fluid mt-4">
         <h1 class="mb-4 d-inline-block">📊 Tableau de Bord</h1>
+        <a href="{{ path('backup_log_index') }}" class="btn btn-outline-primary float-end ms-2">
+            <i class="bi bi-hdd-stack"></i> Historique des sauvegardes
+        </a>
         <div class="dropdown d-inline-block float-end me-3">
             <button class="btn btn-light position-relative" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell fs-4"></i>
@@ -46,7 +49,7 @@
         <!-- Statistiques générales -->
         <div class="row mb-4">
             <div class="col-md-3">
-                <div class="card bg-primary text-white">
+                <div class="card bg-primary text-white dashboard-stat-card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
@@ -61,7 +64,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-success text-white">
+                <div class="card bg-success text-white dashboard-stat-card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
@@ -76,7 +79,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-warning text-dark">
+                <div class="card bg-warning text-dark dashboard-stat-card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
@@ -91,7 +94,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-info text-white">
+                <div class="card bg-info text-white dashboard-stat-card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>

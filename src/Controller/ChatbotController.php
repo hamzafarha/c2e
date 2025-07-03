@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
+use Symfony\Component\HttpClient\HttpClient;
 
 class ChatbotController extends AbstractController
 {
@@ -63,7 +64,34 @@ class ChatbotController extends AbstractController
             return new JsonResponse(['answer' => $answer]);
         }
 
-        // Réponse par défaut
-        return new JsonResponse(['answer' => "Je ne comprends pas encore cette question. Essayez :<br>- Que dois-je commander ce mois-ci ?<br>- Combien reste-t-il de câbles réseau ?"]);
+        // Appel à l'API Gemini pour toute autre question
+        $geminiApiKey = $_ENV['GEMINI_API_KEY'] ?? getenv('GEMINI_API_KEY');
+        if (!$geminiApiKey) {
+            return new JsonResponse(['answer' => "Clé API Gemini manquante. Ajoutez-la dans votre fichier .env."]);
+        }
+        $client = \Symfony\Component\HttpClient\HttpClient::create();
+        $response = $client->request('POST', 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $geminiApiKey, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => "Tu es un assistant pour la gestion de stock, d'articles, d'entrées et de sorties. Réponds de façon claire et concise en français."],
+                            ['text' => $data['question'] ?? ''],
+                        ]
+                    ]
+                ]
+            ],
+        ]);
+        $result = $response->toArray(false);
+        if (isset($result['candidates'][0]['content']['parts'][0]['text'])) {
+            $answer = nl2br($result['candidates'][0]['content']['parts'][0]['text']);
+        } else {
+            $errorMsg = isset($result['error']['message']) ? $result['error']['message'] : json_encode($result);
+            $answer = "Je n'ai pas pu obtenir de réponse de Gemini.<br><pre>" . htmlspecialchars($errorMsg) . "</pre>";
+        }
+        return new JsonResponse(['answer' => $answer]);
     }
 } 
