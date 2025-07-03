@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+
 #[Route('/article')]
 final class ArticleController extends AbstractController
 {
@@ -58,6 +59,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
+
     #[Route('/{id}', name: 'app_article_show', methods: ['GET'])]
     public function show(Article $article): Response
     {
@@ -65,6 +67,7 @@ final class ArticleController extends AbstractController
             'article' => $article,
         ]);
     }
+
 
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response

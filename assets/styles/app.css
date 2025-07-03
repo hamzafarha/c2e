@@ -1,3 +1,72 @@
 body {
-    background-color: skyblue;
+    background: url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    min-height: 100vh;
+    font-family: 'Inter', 'Poppins', Arial, sans-serif;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(40, 40, 60, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 0;
+}
+
+.main-content {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.7);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 32px 24px;
+    margin-top: 24px;
+    backdrop-filter: blur(6px);
+}
+
+.sidebar {
+    background: rgba(102,126,234,0.85);
+    backdrop-filter: blur(8px);
+    box-shadow: 2px 0 16px rgba(102,126,234,0.08);
+}
+
+.card {
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(102,126,234,0.10);
+    border: none;
+    background: rgba(255,255,255,0.85);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.card:hover {
+    box-shadow: 0 8px 32px rgba(102,126,234,0.18);
+    transform: translateY(-6px) scale(1.03);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.10);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    box-shadow: 0 4px 16px rgba(102,126,234,0.18);
+}
+
+.dashboard-stat-card {
+    transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s cubic-bezier(.4,2,.6,1);
+    cursor: pointer;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 4px 24px rgba(102,126,234,0.10);
+}
+.dashboard-stat-card:hover {
+    transform: translateY(-8px) scale(1.04) rotate(-1deg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    z-index: 2;
 }
