@@ -1,0 +1,20 @@
+{# templates/backup_log/import.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Importer un rapport de sauvegarde{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Importer un rapport de sauvegarde</h1>
+    
+    <div class="card mt-3">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_row(form.emlFile) }}
+                <button type="submit" class="btn btn-primary">{{ form_widget(form.importer) }}</button>
+                <a href="{{ path('backup_log_index') }}" class="btn btn-secondary">Annuler</a>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

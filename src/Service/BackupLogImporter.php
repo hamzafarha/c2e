@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use App\Entity\BackupLog;
@@ -42,15 +43,53 @@ class BackupLogImporter
      */
     public function importFromEml(string $emlPath): ?BackupLog
     {
-        $parser = new PhpMimeMailParserParser();
-        $parser->setPath($emlPath);
-        $body = $parser->getMessageBody('text'); // ou 'html' si besoin
-        $log = $this->parseLogContent($body);
-        if ($log) {
+        try {
+            // Lire le contenu brut du fichier .eml
+            $rawEmail = file_get_contents($emlPath);
+
+            // Solution simple pour extraire le corps texte
+            if (preg_match('/Content-Type: text\/plain;.*?\n\n(.*?)\n--/s', $rawEmail, $matches)) {
+                $body = trim($matches[1]);
+            } elseif (preg_match('/Content-Type: text\/plain;.*?\n\n(.*)/s', $rawEmail, $matches)) {
+                $body = trim($matches[1]);
+            } else {
+                // Fallback: prendre tout après les headers
+                $parts = explode("\n\n", $rawEmail, 2);
+                $body = count($parts) > 1 ? trim($parts[1]) : $rawEmail;
+            }
+
+            // Nettoyer le corps si nécessaire
+            $body = $this->cleanEmailBody($body);
+
+            if (empty($body)) {
+                throw new \RuntimeException("Le corps de l'email est vide ou non lisible.");
+            }
+
+            $log = $this->parseLogContent($body);
+
+            if (!$log) {
+                throw new \RuntimeException("Impossible d'extraire les données de sauvegarde depuis l'email.");
+            }
+
             $this->em->persist($log);
             $this->em->flush();
+
+            return $log;
+        } catch (\Exception $e) {
+            throw new \RuntimeException("Erreur lors du parsing de l'email: " . $e->getMessage());
         }
-        return $log;
+    }
+
+    private function cleanEmailBody(string $body): string
+    {
+        // Supprimer les lignes de séparation
+        $body = preg_replace('/-----Original Message-----.*/s', '', $body);
+        $body = preg_replace('/-- \n.*/s', '', $body);
+
+        // Supprimer les réponses précédentes
+        $body = preg_replace('/On.*wrote:.*/s', '', $body);
+
+        return trim($body);
     }
 
     /**
