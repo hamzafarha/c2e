@@ -11,6 +11,8 @@ use App\Service\BackupLogImporter;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class BackupLogController extends AbstractController
 {
@@ -25,40 +27,22 @@ class BackupLogController extends AbstractController
     }
 
     // BackupLogController.php
-    #[Route('/historique/sauvegardes/importer', name: 'backup_log_import', methods: ['GET', 'POST'])]
-    public function import(Request $request, BackupLogImporter $importer): Response
+    #[Route('/historique/sauvegardes/import', name: 'backup_log_import', methods: ['POST'])]
+    public function import(Request $request, BackupLogImporter $importer): RedirectResponse
     {
-        $form = $this->createFormBuilder()
-            ->add('emlFile', FileType::class, [
-                'label' => 'Fichier .eml',
-                'required' => true,
-                'constraints' => [
-                    new File([
-                        'mimeTypes' => ['message/rfc822', 'text/plain'],
-                        'mimeTypesMessage' => 'Veuillez uploader un fichier .eml valide',
-                    ])
-                ]
-            ])
-            ->add('importer', SubmitType::class, ['label' => 'Importer'])
-            ->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $emlFile = $form->get('emlFile')->getData();
-            $tempPath = $emlFile->getRealPath();
-
-            try {
-                $log = $importer->importFromEml($tempPath);
-                $this->addFlash('success', 'Le fichier a été importé avec succès!');
-                return $this->redirectToRoute('backup_log_index');
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur lors de l\'import: ' . $e->getMessage());
+        /** @var UploadedFile|null $file */
+        $file = $request->files->get('eml_file');
+        if ($file && $file->isValid()) {
+            $tmpPath = $file->getPathname();
+            $log = $importer->importFromEml($tmpPath);
+            if ($log) {
+                $this->addFlash('success', 'Rapport importé avec succès.');
+            } else {
+                $this->addFlash('danger', 'Le fichier n\'a pas pu être importé ou n\'est pas reconnu.');
             }
+        } else {
+            $this->addFlash('danger', 'Aucun fichier valide envoyé.');
         }
-
-        return $this->render('backup_log/import.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('backup_log_index');
     }
 }
