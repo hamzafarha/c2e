@@ -12,6 +12,13 @@
             </a>
         </div>
 
+        <div class="mb-3 d-flex gap-2">
+            <input type="text" id="search-equipement" class="form-control" placeholder="Rechercher par nom ou référence...">
+            <button id="sort-equipement" class="btn btn-outline-secondary" data-order="desc" title="Trier">
+                <span id="sort-icon">⬇️</span>
+            </button>
+        </div>
+
         <table class="table table-bordered table-hover table-striped">
             <thead class="table-dark">
                 <tr>
@@ -26,45 +33,36 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-            {% for equipement in equipements %}
-                <tr>
-                    <td>{{ equipement.getId() }}</td>
-                    <td>{{ equipement.getTypeeq() }}</td>
-                    <td>{{ equipement.getNomeq() }}</td>
-                    <td>{{ equipement.getReferenceeq() }}</td>
-                    <td>{{ equipement.getLocalisationeq() }}</td>
-                    <td>{{ equipement.getModeleeq() }}</td>
-                    <td>{{ equipement.getNumserieeq() }}</td>
-                    <td>
-        {% if equipement.getEtat() == 'en_service' %}
-            <span class="badge bg-success">En service</span>
-        {% elseif equipement.getEtat() == 'en_panne' %}
-            <span class="badge bg-danger">En panne</span>
-        {% elseif equipement.getEtat() == 'maintenance' %}
-            <span class="badge bg-warning text-dark">Maintenance</span>
-        {% elseif equipement.getEtat() == 'hors_service' %}
-            <span class="badge bg-secondary">Hors service</span>
-        {% else %}
-            <span class="badge bg-light text-dark">Inconnu</span>
-        {% endif %}
-    </td>
-                    <td>
-                        <a href="{{ path('app_equipement_show', {'ideq': equipement.getId()}) }}"
-                           class="btn btn-sm btn-primary">🔍 Détail</a>
-                        <a href="{{ path('app_equipement_edit', {'ideq': equipement.getId()}) }}"
-                           class="btn btn-sm btn-warning">✏️ Modifier</a>
-                           <a href="{{ path('app_intervention_new', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-success">🛠️ Intervenir</a>
-
-                    </td>
-
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="8" class="text-center text-muted">Aucun équipement trouvé.</td>
-                </tr>
-            {% endfor %}
+            <tbody id="equipement-results">
+                {% include 'equipement/_list.html.twig' with {'equipements': equipements} %}
             </tbody>
         </table>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-equipement');
+        const resultsTbody = document.getElementById('equipement-results');
+        const sortBtn = document.getElementById('sort-equipement');
+        const sortIcon = document.getElementById('sort-icon');
+        let order = 'desc';
+
+        function fetchEquipements() {
+            const query = searchInput.value;
+            fetch(`/equipement/search?q=${encodeURIComponent(query)}&order=${order}`)
+                .then(response => response.text())
+                .then(html => {
+                    resultsTbody.innerHTML = html;
+                });
+        }
+
+        searchInput.addEventListener('input', fetchEquipements);
+
+        sortBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            order = order === 'desc' ? 'asc' : 'desc';
+            sortIcon.textContent = order === 'desc' ? '⬇️' : '⬆️';
+            fetchEquipements();
+        });
+    });
+    </script>
 {% endblock %}

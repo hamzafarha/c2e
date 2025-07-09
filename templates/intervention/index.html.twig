@@ -1,43 +1,88 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Intervention index{% endblock %}
+{% block title %}Liste des Interventions{% endblock %}
 
 {% block body %}
-    <h1>Intervention index</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4"> Liste des Interventions</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>num</th>
-                <th>Date intervention</th>
-                <th>Type intervention</th>
-                <th>Technicien</th>
-                <th>Etat aprés</th>
-                <th>Prochaine date</th>
-                <th>ACTIONS</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for intervention in interventions %}
-            <tr>
-                <td>{{ intervention.idint }}</td>
-                <td>{{ intervention.dateint ? intervention.dateint|date('Y-m-d') : '' }}</td>
-                <td>{{ intervention.typeint }}</td>
-                <td>{{ intervention.technicien }}</td>
-                <td>{{ intervention.etatapres }}</td>
-                <td>{{ intervention.prochainedate|date('d/m/Y') }}</td>
-                <td>
-                    <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}">show</a>
-                    <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+       
+        <div class="mb-3 d-flex gap-2">
+            <input type="text" id="search-intervention" class="form-control" placeholder="Rechercher par technicien ou type...">
+            <button id="sort-intervention" class="btn btn-outline-secondary" data-order="desc" title="Trier">
+                <span id="sort-icon">⬇️</span>
+            </button>
+        </div>
 
-    <a href="{{ path('app_intervention_new') }}">Create new</a>
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Technicien</th>
+                    <th>État après</th>
+                    <th>Prochaine date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="intervention-results">
+                {% for intervention in interventions %}
+                    <tr>
+                      
+                        <td>{{ intervention.dateint ? intervention.dateint|date('d/m/Y') : '' }}</td>
+                        <td>{{ intervention.typeint }}</td>
+                        <td>{{ intervention.technicien }}</td>
+                        <td>
+                            {% if intervention.etatapres == 'réparé' %}
+                                <span class="badge bg-success">Réparé</span>
+                            {% elseif intervention.etatapres == 'en attente' %}
+                                <span class="badge bg-warning text-dark">En attente</span>
+                            {% elseif intervention.etatapres == 'non réparé' %}
+                                <span class="badge bg-danger">Non réparé</span>
+                            {% else %}
+                                <span class="badge bg-light text-dark">{{ intervention.etatapres }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ intervention.prochainedate ? intervention.prochainedate|date('d/m/Y') : '' }}</td>
+                        <td>
+                            <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}" class="btn btn-sm btn-info" title="Voir"><i class="bi bi-eye"></i></a>
+                            <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}" class="btn btn-sm btn-warning" title="Modifier"><i class="bi bi-pencil"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-intervention');
+        const resultsTbody = document.getElementById('intervention-results');
+        const sortBtn = document.getElementById('sort-intervention');
+        const sortIcon = document.getElementById('sort-icon');
+        let order = 'desc';
+
+        function fetchInterventions() {
+            const query = searchInput.value;
+            fetch(`/intervention/search?q=${encodeURIComponent(query)}&order=${order}`)
+                .then(response => response.text())
+                .then(html => {
+                    resultsTbody.innerHTML = html;
+                });
+        }
+
+        searchInput.addEventListener('input', fetchInterventions);
+
+        sortBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            order = order === 'desc' ? 'asc' : 'desc';
+            sortIcon.textContent = order === 'desc' ? '⬇️' : '⬆️';
+            fetchInterventions();
+        });
+    });
+    </script>
 {% endblock %}
