@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BackupLogController extends AbstractController
 {
@@ -45,4 +46,6 @@ class BackupLogController extends AbstractController
         }
         return $this->redirectToRoute('backup_log_index');
     }
+
+    
 }
