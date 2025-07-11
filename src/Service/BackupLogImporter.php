@@ -80,6 +80,84 @@ class BackupLogImporter
         }
     }
 
+    /**
+     * Importe un rapport de sauvegarde depuis un fichier .eml en utilisant Ollama/Mistral (IA locale)
+     * @param string $emlPath
+     * @return BackupLog|null
+     */
+    public function importFromEmlWithOllama(string $emlPath): ?BackupLog
+    {
+        $rawEmail = file_get_contents($emlPath);
+        $prompt = <<<EOT
+Voici un rapport de sauvegarde :
+
+$rawEmail
+
+Peux-tu extraire ces informations et me les retourner sous forme de JSON :
+{
+  "start_time": "...",
+  "end_time": "...",
+  "duration": "...",
+  "total_size": "...",
+  "files_processed": ...,
+  "execution_type": "...",
+  "computer_account": "...",
+  "windows_version": "..."
+}
+EOT;
+        $jsonString = $this->askOllamaMistral($prompt);
+        $data = json_decode($jsonString, true);
+        if (!$data) {
+            throw new \RuntimeException("La réponse d'Ollama n'est pas un JSON valide : $jsonString");
+        }
+        $log = new BackupLog();
+        if (!empty($data['start_time'])) {
+            $log->setStartTime(new \DateTime($data['start_time']));
+        }
+        if (!empty($data['end_time'])) {
+            $log->setEndTime(new \DateTime($data['end_time']));
+        }
+        $log->setDuration($data['duration'] ?? '');
+        $log->setTotalSize($data['total_size'] ?? '');
+        $log->setFilesProcessed(isset($data['files_processed']) ? (int)$data['files_processed'] : 0);
+        // Les champs suivants ne sont pas dans le prompt IA, on les laisse vides ou à null
+        $log->setStatus($data['execution_type'] ?? ''); // ou autre mapping si besoin
+        $log->setSourcePath($data['computer_account'] ?? '');
+        $log->setDestinationPath($data['windows_version'] ?? '');
+        $log->setErrors(0);
+        $log->setObjectsDeleted(null);
+        $this->em->persist($log);
+        $this->em->flush();
+        return $log;
+    }
+
+    /**
+     * Appelle l'API locale Ollama/Mistral avec un prompt et retourne la réponse brute
+     */
+    private function askOllamaMistral(string $prompt): string
+    {
+        $data = [
+            "model" => "mistral",
+            "prompt" => $prompt,
+            "stream" => false
+        ];
+        $options = [
+            'http' => [
+                'header'  => "Content-Type: application/json\r\n",
+                'method'  => 'POST',
+                'content' => json_encode($data),
+                'timeout' => 60
+            ],
+        ];
+        $context  = stream_context_create($options);
+        $result = file_get_contents('http://localhost:11434/api/generate', false, $context);
+        if ($result === false) {
+            throw new \RuntimeException("Erreur lors de l'appel à Ollama");
+        }
+        $json = json_decode($result, true);
+        return $json['response'] ?? '';
+    }
+
     private function cleanEmailBody(string $body): string
     {
         // Supprimer les lignes de séparation
