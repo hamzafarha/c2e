@@ -6,6 +6,7 @@ use App\Repository\EquipementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Null_;
 
 #[ORM\Entity(repositoryClass: EquipementRepository::class)]
 class Equipement
@@ -29,7 +30,7 @@ class Equipement
 
     #[ORM\Column(length: 255)]
     private ?string $modeleeq = null;
-    
+
     #[ORM\Column(length: 255)]
     private ?string $numserieeq = null;
 
@@ -51,15 +52,15 @@ class Equipement
     }
 
     public function getId(): ?int
-{
-    return $this->ideq;
-}
+    {
+        return $this->ideq;
+    }
 
     public function getTypeeq(): ?string
     {
         return $this->typeeq;
     }
-    
+
 
     public function setTypeeq(string $typeeq): static
     {
@@ -186,4 +187,19 @@ class Equipement
         return $this;
     }
 
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'createdBy', referencedColumnName: 'id')]
+    private ?User $createdBy = null;
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $user): self
+    {
+        $this->createdBy = $user;
+        return $this;
+    }
 }

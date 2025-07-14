@@ -1,126 +1,48 @@
 <?php
+
+// src/Service/BackupLogImporter.php
 namespace App\Service;
 
 use App\Entity\BackupLog;
-use Doctrine\ORM\EntityManagerInterface;
-use eXorus\PhpMimeMailParser\Parser as PhpMimeMailParserParser;
-use PhpMimeMailParser\Parser;
+use App\Service\OllamaService;
 
 class BackupLogImporter
 {
-    private $em;
+    private OllamaService $ollamaService;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(OllamaService $ollamaService)
     {
-        $this->em = $em;
+        $this->ollamaService = $ollamaService;
     }
 
-    /**
-     * Importe tous les fichiers de log d'un dossier
-     * @param string $directory
-     * @return int Nombre de logs importés
-     */
-    public function importFromDirectory(string $directory): int
+    public function importFromEmail(string $emailContent): BackupLog
     {
-        $imported = 0;
-        $files = glob($directory . '/*.{txt,html}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $log = $this->parseLogFile($file);
-            if ($log) {
-                $this->em->persist($log);
-                $imported++;
-            }
-        }
-        $this->em->flush();
-        return $imported;
-    }
-
-    /**
-     * Importe un rapport de sauvegarde depuis un fichier .eml
-     * @param string $emlPath
-     * @return BackupLog|null
-     */
-    public function importFromEml(string $emlPath): ?BackupLog
-    {
-        $parser = new PhpMimeMailParserParser();
-        $parser->setPath($emlPath);
-        $body = $parser->getMessageBody('text'); // ou 'html' si besoin
-        $log = $this->parseLogContent($body);
-        if ($log) {
-            $this->em->persist($log);
-            $this->em->flush();
-        }
-        return $log;
-    }
-
-    /**
-     * Parse le contenu brut d'un rapport de sauvegarde (texte ou HTML)
-     * @param string $content
-     * @return BackupLog|null
-     */
-    public function parseLogContent(string $content): ?BackupLog
-    {
-        $startTime = $this->extractDate($content, '/Start time: ([^\n]+)/i');
-        $endTime = $this->extractDate($content, '/End time: ([^\n]+)/i');
-        $duration = $this->extractString($content, '/Duration: ([^\n]+)/i');
-        $status = $this->extractString($content, '/Status: ([^\n]+)/i');
-        $totalSize = $this->extractString($content, '/Total size: ([^\n]+)/i');
-        $filesProcessed = $this->extractInt($content, '/Files processed: (\d+)/i');
-        $errors = $this->extractInt($content, '/Errors: (\d+)/i');
-        $objectsDeleted = $this->extractInt($content, '/Objects deleted: (\d+)/i', true);
-        $sourcePath = $this->extractString($content, '/Source: ([^\n]+)/i');
-        $destinationPath = $this->extractString($content, '/Destination: ([^\n]+)/i');
-
-        if (!$startTime || !$endTime) {
-            return null;
-        }
+        $data = $this->ollamaService->parseEmailWithOllama($emailContent);
 
         $log = new BackupLog();
-        $log->setStartTime($startTime);
-        $log->setEndTime($endTime);
-        $log->setDuration($duration ?? '');
-        $log->setStatus($status ?? '');
-        $log->setTotalSize($totalSize ?? '');
-        $log->setFilesProcessed($filesProcessed ?? 0);
-        $log->setErrors($errors ?? 0);
-        $log->setObjectsDeleted($objectsDeleted);
-        $log->setSourcePath($sourcePath ?? '');
-        $log->setDestinationPath($destinationPath ?? '');
+        $log->setStartTime(new \DateTime($data['date_debut']));
+        $log->setEndTime(new \DateTime($data['date_fin']));
+        $log->setDuration($data['duree'] ?? '00:00:00');
+        $log->setStatus($this->normalizeStatus($data['statut']));
+        $log->setTotalSize($data['taille_totale'] ?? '0');
+        $log->setFilesProcessed($data['nb_fichiers'] ?? 0);
+        $log->setErrors($data['nb_erreurs'] ?? 0);
+        $log->setObjectsDeleted($data['nb_objets_supprimes'] ?? null);
+        $log->setSourcePath($data['chemin_source'] ?? 'Inconnu');
+        $log->setDestinationPath($data['chemin_destination'] ?? 'Inconnu');
+
         return $log;
     }
 
-    /**
-     * Parse un fichier de log Iperius et retourne un BackupLog ou null
-     * @param string $filePath
-     * @return BackupLog|null
-     */
-    public function parseLogFile(string $filePath): ?BackupLog
+    private function normalizeStatus(string $status): string
     {
-        $content = file_get_contents($filePath);
-        return $this->parseLogContent($content);
-    }
-
-    private function extractDate(string $content, string $pattern): ?\DateTime
-    {
-        if (preg_match($pattern, $content, $matches)) {
-            return new \DateTime(trim($matches[1]));
-        }
-        return null;
-    }
-
-    private function extractString(string $content, string $pattern): ?string
-    {
-        if (preg_match($pattern, $content, $matches)) {
-            return trim($matches[1]);
-        }
-        return null;
-    }
-
-    private function extractInt(string $content, string $pattern, bool $nullable = false): ?int
-    {
-        if (preg_match($pattern, $content, $matches)) {
-            return (int) $matches[1];
-        }
-        return $nullable ? null : 0;
+        $status = strtolower(trim($status));
+        
+        return match (true) {
+            str_contains($status, 'succès') => 'Success',
+            str_contains($status, 'échec total') => 'Total Failure',
+            str_contains($status, 'échec partiel') => 'Partial Failure',
+            default => ucfirst($status)
+        };
     }
 }

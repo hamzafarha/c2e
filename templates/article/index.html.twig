@@ -11,7 +11,9 @@
 			<input type="text" name="q" value="{{ q|default('') }}" class="form-control me-2" placeholder="Recherche par référence ou nom...">
 		</form>
 		{% if q %}
-			<div class="alert alert-info">Résultats pour : <strong>{{ q }}</strong></div>
+			<div class="alert alert-info">Résultats pour :
+				<strong>{{ q }}</strong>
+			</div>
 		{% endif %}
 
 		<div class="mb-3 text-end">
@@ -68,20 +70,25 @@
 	</div>
 
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
-		const searchInput = document.querySelector('input[name="q"]');
-		let tableBody = document.querySelector('table tbody');
-		let lastValue = searchInput.value;
+		document.addEventListener('DOMContentLoaded', function () {
+			const searchInput = document.querySelector('input[name="q"]');
+			let tableBody = document.querySelector('table tbody');
+			let lastValue = searchInput.value;
 
-		searchInput.addEventListener('input', function() {
-			const q = this.value;
-			console.log('Recherche AJAX', q);
-			if (q === lastValue) return;
-			lastValue = q;
-			fetch(`?q=${encodeURIComponent(q)}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-				.then(r => r.text())
-				.then(html => {
-					// Remplacer le tbody existant par le nouveau
+			searchInput.addEventListener('input', function () {
+				const q = this.value;
+				console.log('Recherche AJAX', q);
+				if (q === lastValue)
+					return;
+
+
+				lastValue = q;
+				fetch(`?q=${encodeURIComponent(q)
+					}`, {
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest'
+					}
+				}).then(r => r.text()).then(html => { // Remplacer le tbody existant par le nouveau
 					const temp = document.createElement('table');
 					temp.innerHTML = html;
 					const newTbody = temp.querySelector('tbody');
@@ -90,7 +97,7 @@
 						tableBody = newTbody; // Mettre à jour la référence
 					}
 				});
+			});
 		});
-	});
 	</script>
 {% endblock %}

@@ -1,42 +1,63 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Historique des sauvegardes{% endblock %}
+{% block title %}Historique des sauvegardes
+{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Historique des sauvegardes</h1>
-    <table class="table table-bordered table-hover mt-3">
-        <thead class="thead-dark">
-            <tr>
-                <th>Date de début</th>
-                <th>Fin</th>
-                <th>Durée</th>
-                <th>Taille</th>
-                <th>Statut</th>
-                <th>Nb fichiers</th>
-                <th>Erreurs</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for log in logs %}
-            {% set rowClass =
+	<div class="container mt-4">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1>Historique des sauvegardes</h1>
+			<form action="{{ path('backup_log_import') }}" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+				<input type="file" name="eml_file" accept=".eml" class="form-control" required>
+				<button type="submit" class="btn btn-primary">
+					<i class="fas fa-upload"></i> Importer un rapport
+				</button>
+			</form>
+		</div>
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		<table class="table table-bordered table-hover mt-3">
+			<thead class="thead-dark">
+				<tr>
+					<th>Date de début</th>
+					<th>Fin</th>
+					<th>Durée</th>
+					<th>Taille</th>
+					<th>Statut</th>
+					<th>Nb fichiers</th>
+					<th>Erreurs</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for log in logs %}
+					{% set rowClass =
                 log.status is same as('success') ? 'table-success' :
                 (log.status is same as('failed') ? 'table-danger' :
                 (log.status is same as('warning') ? 'table-warning' : ''))
             %}
-            <tr class="{{ rowClass }}">
-                <td>{{ log.startTime ? log.startTime|date('d/m/Y H:i') : '' }}</td>
-                <td>{{ log.endTime ? log.endTime|date('d/m/Y H:i') : '' }}</td>
-                <td>{{ log.duration }}</td>
-                <td>{{ log.totalSize }}</td>
-                <td><strong>{{ log.status|capitalize }}</strong></td>
-                <td>{{ log.filesProcessed }}</td>
-                <td>{{ log.errors }}</td>
-            </tr>
-        {% else %}
-            <tr><td colspan="7" class="text-center">Aucune sauvegarde trouvée.</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+					<tr class="{{ rowClass }}">
+						<td>{{ log.startTime ? log.startTime|date('d/m/Y H:i') : '' }}</td>
+						<td>{{ log.endTime ? log.endTime|date('d/m/Y H:i') : '' }}</td>
+						<td>{{ log.duration }}</td>
+						<td>{{ log.totalSize }}</td>
+						<td>
+							<strong>{{ log.status|capitalize }}</strong>
+						</td>
+						<td>{{ log.filesProcessed }}</td>
+						<td>{{ log.errors }}</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="7" class="text-center">Aucune sauvegarde trouvée.</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}
