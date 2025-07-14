@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Intervention{% endblock %}
+{% block title %}Modifier Intervention{% endblock %}
 
 {% block body %}
-    <h1>Edit Intervention</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4">✏️ Modifier l'Intervention</h1>
 
-    {{ include('intervention/_form.html.twig', {'button_label': 'Update'}) }}
+        <div class="card shadow rounded p-4">
+            {{ include('intervention/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+        </div>
 
-    <a href="{{ path('app_intervention_index') }}">back to list</a>
-
-    {{ include('intervention/_delete_form.html.twig') }}
+        <div class="mt-3 d-flex justify-content-between">
+            <a href="{{ path('app_intervention_index') }}" class="btn btn-secondary">⬅️ Retour à la liste</a>
+            {{ include('intervention/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}

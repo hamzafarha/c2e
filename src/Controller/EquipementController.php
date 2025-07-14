@@ -67,7 +67,25 @@ final class EquipementController extends AbstractController
         ]);
     }
 
-    #[Route('/{ideq}', name: 'app_equipement_show', methods: ['GET'])]
+    #[Route('/search', name: 'app_equipement_search', methods: ['GET'])]
+    public function search(Request $request, EquipementRepository $equipementRepository): Response
+    {
+        $query = $request->query->get('q', '');
+        $order = $request->query->get('order', 'desc'); // 'desc' par défaut
+
+        $equipements = $equipementRepository->createQueryBuilder('e')
+            ->where('e.nomeq LIKE :query OR e.referenceeq LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('e.ideq', $order === 'asc' ? 'ASC' : 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('equipement/_list.html.twig', [
+            'equipements' => $equipements,
+        ]);
+    }
+
+    #[Route('/{ideq}', name: 'app_equipement_show', methods: ['GET'], requirements: ['ideq' => '\\d+'])]
     public function show(Equipement $equipement): Response
     {
         return $this->render('equipement/show.html.twig', [
@@ -75,7 +93,7 @@ final class EquipementController extends AbstractController
         ]);
     }
 
-    #[Route('/{ideq}/edit', name: 'app_equipement_edit', methods: ['GET', 'POST'])]
+    #[Route('/{ideq}/edit', name: 'app_equipement_edit', methods: ['GET', 'POST'], requirements: ['ideq' => '\\d+'])]
     public function edit(Request $request, Equipement $equipement, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(EquipementForm::class, $equipement);
@@ -93,7 +111,7 @@ final class EquipementController extends AbstractController
         ]);
     }
 
-    #[Route('/{ideq}', name: 'app_equipement_delete', methods: ['POST'])]
+    #[Route('/{ideq}', name: 'app_equipement_delete', methods: ['POST'], requirements: ['ideq' => '\\d+'])]
     public function delete(Request $request, Equipement $equipement, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$equipement->getId(), $request->getPayload()->getString('_token'))) {
