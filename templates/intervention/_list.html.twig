@@ -1,0 +1,28 @@
+{% for intervention in interventions %}
+    <tr>
+        <td>{{ intervention.idint }}</td>
+        <td>{{ intervention.dateint ? intervention.dateint|date('d/m/Y') : '' }}</td>
+        <td>{{ intervention.typeint }}</td>
+        <td>{{ intervention.technicien }}</td>
+        <td>
+            {% if intervention.etatapres == 'réparé' %}
+                <span class="badge bg-success">Réparé</span>
+            {% elseif intervention.etatapres == 'en attente' %}
+                <span class="badge bg-warning text-dark">En attente</span>
+            {% elseif intervention.etatapres == 'non réparé' %}
+                <span class="badge bg-danger">Non réparé</span>
+            {% else %}
+                <span class="badge bg-light text-dark">{{ intervention.etatapres }}</span>
+            {% endif %}
+        </td>
+        <td>{{ intervention.prochainedate ? intervention.prochainedate|date('d/m/Y') : '' }}</td>
+        <td>
+            <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}" class="btn btn-sm btn-info" title="Voir"><i class="bi bi-eye"></i></a>
+            <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}" class="btn btn-sm btn-warning" title="Modifier"><i class="bi bi-pencil"></i></a>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="7">Aucun enregistrement trouvé</td>
+    </tr>
+{% endfor %} 

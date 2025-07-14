@@ -54,6 +54,26 @@ public function new(Request $request, EntityManagerInterface $entityManager, ?in
 
 }
 
+    #[Route('/search', name: 'app_intervention_search', methods: ['GET'])]
+    public function search(Request $request, InterventionRepository $interventionRepository): Response
+    {
+        $query = $request->query->get('q', '');
+        $order = $request->query->get('order', 'desc'); // 'desc' par défaut
+
+        $qb = $interventionRepository->createQueryBuilder('i');
+        if ($query) {
+            $qb->where('i.technicien LIKE :query OR i.typeint LIKE :query')
+                ->setParameter('query', '%' . $query . '%');
+        }
+        $qb->orderBy('i.idint', $order === 'asc' ? 'ASC' : 'DESC');
+
+        $interventions = $qb->getQuery()->getResult();
+
+        return $this->render('intervention/_list.html.twig', [
+            'interventions' => $interventions,
+        ]);
+    }
+
     #[Route('/{idint}', name: 'app_intervention_show', methods: ['GET'])]
     public function show(Intervention $intervention): Response
     {
