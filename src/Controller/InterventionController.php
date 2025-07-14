@@ -65,7 +65,8 @@ public function new(Request $request, EntityManagerInterface $entityManager, ?in
             $qb->where('i.technicien LIKE :query OR i.typeint LIKE :query')
                 ->setParameter('query', '%' . $query . '%');
         }
-        $qb->orderBy('i.idint', $order === 'asc' ? 'ASC' : 'DESC');
+        $qb->orderBy('i.idint', $order === 'asc' ? 'ASC' : 'DESC')
+           ->addOrderBy('i.dateint', 'DESC');
 
         $interventions = $qb->getQuery()->getResult();
 
