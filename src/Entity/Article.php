@@ -39,6 +39,20 @@ class Article
     #[ORM\OneToMany(targetEntity: Sortiestock::class, mappedBy: 'idart', orphanRemoval: true)]
     private Collection $sortiestocks;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'createdBy' , referencedColumnName: 'id')]
+    private ?User $createdBy = null;
+
+    public function getCreatedBy(): ?\App\Entity\User   
+    {
+        return $this->createdBy;
+    }
+    public function setCreatedBy(?\App\Entity\User $user): self
+    {
+        $this->createdBy = $user;
+        return $this;
+    }
+
     public function __construct()
     {
         $this->entreestocks = new ArrayCollection();

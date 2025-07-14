@@ -14,6 +14,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
         private UserPasswordHasherInterface $passwordHasher
     ) {}
 
+    
     public static function getGroups(): array
     {
         return ['users'];
