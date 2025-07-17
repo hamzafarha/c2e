@@ -164,7 +164,7 @@
 
                         <!-- Bouton de déconnexion en bas -->
                         <div class="mt-auto p-3">
-                            <a href="{{ path('app_logout') }}" class="btn btn-outline-light w-100">
+                            <a href="{{ path('app_logout') }}" class="btn btn-outline-light w-100" id="logout-link">
                                 <i class="bi bi-box-arrow-right me-2"></i>
                                 Déconnexion
                             </a>
@@ -268,6 +268,17 @@
             if (e.key === 'Enter') sendMessage();
         });
         send.onclick = sendMessage;
+        // Confirmation avant déconnexion
+        document.addEventListener('DOMContentLoaded', function() {
+            var logoutLink = document.getElementById('logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
         </script>
     </body>
 </html>
