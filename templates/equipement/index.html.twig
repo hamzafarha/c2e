@@ -2,6 +2,43 @@
 
 {% block title %}Liste des Équipements{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Styles pour les filtres */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-container .form-control,
+        .filter-container .form-select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-container .btn {
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-container .form-control,
+            .filter-container .form-select,
+            .filter-container .btn {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="container mt-5">
         <h1 class="mb-4">📦 Liste des Équipements</h1>
@@ -12,43 +49,59 @@
             </a>
         </div>
 
-        <div class="mb-3 d-flex gap-2">
+        <div class="filter-container">
             <input type="text" id="search-equipement" class="form-control" placeholder="Rechercher par nom ou référence...">
+            
+            <select id="filter-type" class="form-select">
+                <option value="">Tous les types</option>
+                <option value="informatique">Informatique</option>
+                <option value="réseau">Réseau</option>
+                <option value="PC">PC</option>
+                <option value="Imprimantes">Imprimantes</option>
+                <option value="autres">Autres</option>
+            </select>
+            
             <button id="sort-equipement" class="btn btn-outline-secondary" data-order="desc" title="Trier">
                 <span id="sort-icon">⬇️</span>
             </button>
         </div>
 
-        <table class="table table-bordered table-hover table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Type</th>
-                    <th>Nom</th>
-                    <th>Référence</th>
-                    <th>Emplacement</th>
-                    <th>Modèle</th>
-                    <th>N° Série</th>
-                    <th>Etat</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="equipement-results">
-                {% include 'equipement/_list.html.twig' with {'equipements': equipements} %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 3%;">#</th>
+                        <th style="width: 10%;">Type</th>
+                        <th style="width: 18%;">Nom</th>
+                        <th style="width: 13%;">Référence</th>
+                        <th style="width: 15%;">Emplacement</th>
+                        <th style="width: 13%;">Modèle</th>
+                        <th style="width: 13%;">N° Série</th>
+                        <th style="width: 8%;">Etat</th>
+                        <th style="width: 14%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="equipement-results">
+                    {% include 'equipement/_list.html.twig' with {'equipements': equipements} %}
+                </tbody>
+            </table>
+        </div>
     </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('search-equipement');
         const resultsTbody = document.getElementById('equipement-results');
         const sortBtn = document.getElementById('sort-equipement');
         const sortIcon = document.getElementById('sort-icon');
+        const filterType = document.getElementById('filter-type');
         let order = 'desc';
 
         function fetchEquipements() {
             const query = searchInput.value;
-            fetch(`/equipement/search?q=${encodeURIComponent(query)}&order=${order}`)
+            const type = filterType.value;
+            
+            fetch(`/equipement/search?q=${encodeURIComponent(query)}&order=${order}&type=${encodeURIComponent(type)}`)
                 .then(response => response.text())
                 .then(html => {
                     resultsTbody.innerHTML = html;
@@ -56,6 +109,7 @@
         }
 
         searchInput.addEventListener('input', fetchEquipements);
+        filterType.addEventListener('change', fetchEquipements);
 
         sortBtn.addEventListener('click', function(e) {
             e.preventDefault();
