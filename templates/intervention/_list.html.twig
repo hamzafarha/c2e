@@ -17,8 +17,8 @@
         </td>
         <td>{{ intervention.prochainedate ? intervention.prochainedate|date('d/m/Y') : '' }}</td>
         <td>
-            <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}" class="btn btn-sm btn-info" title="Voir"><i class="bi bi-eye"></i></a>
-            <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}" class="btn btn-sm btn-warning" title="Modifier"><i class="bi bi-pencil"></i></a>
+            <a href="{{ path('app_intervention_show', {'idint': intervention.idint}) }}" class="btn btn-sm btn-primary">🔍 Détail</a>
+            <a href="{{ path('app_intervention_edit', {'idint': intervention.idint}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
         </td>
     </tr>
 {% else %}

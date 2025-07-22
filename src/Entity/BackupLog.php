@@ -1,11 +1,11 @@
 <?php
+// src/Entity/BackupLog.php
 
 namespace App\Entity;
 
-use App\Repository\BackupLogRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BackupLogRepository::class)]
+#[ORM\Entity]
 class BackupLog
 {
     #[ORM\Id]
@@ -13,34 +13,37 @@ class BackupLog
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTime $startTime = null;
-
-    #[ORM\Column]
-    private ?\DateTime $endTime = null;
-
     #[ORM\Column(length: 255)]
-    private ?string $duration = null;
+    private ?string $backupName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $startTime = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $endTime = null;
+
+    #[ORM\Column(length: 50)]
     private ?string $status = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $totalSize = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $details = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $totalSizeGB = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $filesProcessed = null;
 
-    #[ORM\Column]
-    private ?int $errors = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $objectsDeleted = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $errorsCount = null;
 
     #[ORM\Column(length: 255)]
+    private ?string $backupType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $sourcePath = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $destinationPath = null;
 
     public function getId(): ?int
@@ -48,38 +51,38 @@ class BackupLog
         return $this->id;
     }
 
-    public function getStartTime(): ?\DateTime
+    public function getBackupName(): ?string
+    {
+        return $this->backupName;
+    }
+
+    public function setBackupName(string $backupName): static
+    {
+        $this->backupName = $backupName;
+
+        return $this;
+    }
+
+    public function getStartTime(): ?\DateTimeInterface
     {
         return $this->startTime;
     }
 
-    public function setStartTime(\DateTime $startTime): static
+    public function setStartTime(\DateTimeInterface $startTime): static
     {
         $this->startTime = $startTime;
 
         return $this;
     }
 
-    public function getEndTime(): ?\DateTime
+    public function getEndTime(): ?\DateTimeInterface
     {
         return $this->endTime;
     }
 
-    public function setEndTime(\DateTime $endTime): static
+    public function setEndTime(\DateTimeInterface $endTime): static
     {
         $this->endTime = $endTime;
-
-        return $this;
-    }
-
-    public function getDuration(): ?string
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(string $duration): static
-    {
-        $this->duration = $duration;
 
         return $this;
     }
@@ -96,14 +99,26 @@ class BackupLog
         return $this;
     }
 
-    public function getTotalSize(): ?string
+    public function getDetails(): ?string
     {
-        return $this->totalSize;
+        return $this->details;
     }
 
-    public function setTotalSize(string $totalSize): static
+    public function setDetails(?string $details): static
     {
-        $this->totalSize = $totalSize;
+        $this->details = $details;
+
+        return $this;
+    }
+
+    public function getTotalSizeGB(): ?float
+    {
+        return $this->totalSizeGB;
+    }
+
+    public function setTotalSizeGB(?float $totalSizeGB): static
+    {
+        $this->totalSizeGB = $totalSizeGB;
 
         return $this;
     }
@@ -113,33 +128,33 @@ class BackupLog
         return $this->filesProcessed;
     }
 
-    public function setFilesProcessed(int $filesProcessed): static
+    public function setFilesProcessed(?int $filesProcessed): static
     {
         $this->filesProcessed = $filesProcessed;
 
         return $this;
     }
 
-    public function getErrors(): ?int
+    public function getErrorsCount(): ?int
     {
-        return $this->errors;
+        return $this->errorsCount;
     }
 
-    public function setErrors(int $errors): static
+    public function setErrorsCount(?int $errorsCount): static
     {
-        $this->errors = $errors;
+        $this->errorsCount = $errorsCount;
 
         return $this;
     }
 
-    public function getObjectsDeleted(): ?int
+    public function getBackupType(): ?string
     {
-        return $this->objectsDeleted;
+        return $this->backupType;
     }
 
-    public function setObjectsDeleted(?int $objectsDeleted): static
+    public function setBackupType(string $backupType): static
     {
-        $this->objectsDeleted = $objectsDeleted;
+        $this->backupType = $backupType;
 
         return $this;
     }
@@ -149,7 +164,7 @@ class BackupLog
         return $this->sourcePath;
     }
 
-    public function setSourcePath(string $sourcePath): static
+    public function setSourcePath(?string $sourcePath): static
     {
         $this->sourcePath = $sourcePath;
 
@@ -161,10 +176,19 @@ class BackupLog
         return $this->destinationPath;
     }
 
-    public function setDestinationPath(string $destinationPath): static
+    public function setDestinationPath(?string $destinationPath): static
     {
         $this->destinationPath = $destinationPath;
 
         return $this;
+    }
+
+    public function getDuration(): ?string
+    {
+        if ($this->startTime && $this->endTime) {
+            $interval = $this->startTime->diff($this->endTime);
+            return $interval->format('%Hh %Im %Ss');
+        }
+        return null;
     }
 }

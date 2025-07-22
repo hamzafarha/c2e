@@ -10,6 +10,10 @@ services:
     App\Service\OllamaService :
         arguments :
             $ollamaUrl: '%ollama.url%'
+    App\Service\IperiusParserService: ~
+    # Alias pour compatibilité
+    App\Service\BackupParserService:
+        alias: App\Service\IperiusParserService
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

@@ -19,6 +19,8 @@ class EquipementForm extends AbstractType
         'choices' => [
             'Informatique' => 'informatique',
             'Réseau' => 'réseau',
+            'PC' => 'PC',
+            'Imprimantes' => 'Imprimantes',
             'Autres' => 'autres',
         ],
         'placeholder' => 'Sélectionnez un type...',

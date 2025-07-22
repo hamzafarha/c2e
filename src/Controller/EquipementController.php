@@ -18,10 +18,30 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final class EquipementController extends AbstractController
 {
     #[Route(name: 'app_equipement_index', methods: ['GET'])]
-    public function index(EquipementRepository $equipementRepository): Response
+    public function index(Request $request, EquipementRepository $equipementRepository): Response
     {
+        $query = $request->query->get('q', '');
+        $type = $request->query->get('type', '');
+        $order = $request->query->get('order', 'desc');
+
+        $qb = $equipementRepository->createQueryBuilder('e');
+
+        if (!empty($query)) {
+            $qb->where('e.nomeq LIKE :query OR e.referenceeq LIKE :query')
+                ->setParameter('query', '%' . $query . '%');
+        }
+
+        if (!empty($type)) {
+            $qb->andWhere('e.typeeq = :type')
+                ->setParameter('type', $type);
+        }
+
+        $qb->orderBy('e.ideq', $order === 'asc' ? 'ASC' : 'DESC');
+
+        $equipements = $qb->getQuery()->getResult();
+
         return $this->render('equipement/index.html.twig', [
-            'equipements' => $equipementRepository->findAll(),
+            'equipements' => $equipements,
         ]);
     }
 
@@ -71,14 +91,24 @@ final class EquipementController extends AbstractController
     public function search(Request $request, EquipementRepository $equipementRepository): Response
     {
         $query = $request->query->get('q', '');
-        $order = $request->query->get('order', 'desc'); // 'desc' par défaut
+        $order = $request->query->get('order', 'desc');
+        $type = $request->query->get('type', '');
 
-        $equipements = $equipementRepository->createQueryBuilder('e')
-            ->where('e.nomeq LIKE :query OR e.referenceeq LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->orderBy('e.ideq', $order === 'asc' ? 'ASC' : 'DESC')
-            ->getQuery()
-            ->getResult();
+        $qb = $equipementRepository->createQueryBuilder('e');
+        
+        if (!empty($query)) {
+            $qb->where('e.nomeq LIKE :query OR e.referenceeq LIKE :query')
+            ->setParameter('query', '%' . $query . '%');
+        }
+        
+        if (!empty($type)) {
+            $qb->andWhere('e.typeeq = :type')
+            ->setParameter('type', $type);
+        }
+        
+        $qb->orderBy('e.ideq', $order === 'asc' ? 'ASC' : 'DESC');
+        
+        $equipements = $qb->getQuery()->getResult();
 
         return $this->render('equipement/_list.html.twig', [
             'equipements' => $equipements,
