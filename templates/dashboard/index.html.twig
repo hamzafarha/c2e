@@ -6,6 +6,10 @@
     <div class="container-fluid mt-4">
         <h1 class="mb-4 d-inline-block">📊 Tableau de Bord</h1>
         <div class="dropdown d-inline-block float-end me-3">
+            <!-- Nouveau bouton Rapports -->
+            <a href="{{ path('app_backuplog_index') }}" class="btn btn-info">
+                <i class="bi bi-file-earmark-text"></i> Rapports de Sauvegarde
+            </a>
             <button class="btn btn-light position-relative" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell fs-4"></i>
                 {% set notif_count = articles_rupture|length + articles_critiques|length %}
