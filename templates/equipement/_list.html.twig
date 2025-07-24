@@ -21,9 +21,11 @@
             {% endif %}
         </td>
         <td>
-            <a href="{{ path('app_equipement_show', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-primary me-1" title="Voir"><i class="bi bi-eye"></i></a>
-            <a href="{{ path('app_equipement_edit', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-warning me-1" title="Modifier"><i class="bi bi-pencil"></i></a>
-            <a href="{{ path('app_intervention_new', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-success" title="Intervenir"><i class="bi bi-tools"></i></a>
+            <div class="d-flex align-items-center gap-1">
+                <a href="{{ path('app_equipement_show', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-primary" title="Voir"><i class="bi bi-eye"></i></a>
+                <a href="{{ path('app_equipement_edit', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-warning" title="Modifier"><i class="bi bi-pencil"></i></a>
+                <a href="{{ path('app_intervention_new', {'ideq': equipement.getId()}) }}" class="btn btn-sm btn-success" title="Intervenir"><i class="bi bi-tools"></i></a>
+            </div>
         </td>
     </tr>
 {% else %}
