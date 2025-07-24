@@ -93,17 +93,4 @@ class BackupLogController extends AbstractController
         }
         return $this->redirectToRoute('app_backuplog_index');
     }
-
-    #[Route('/import/iperius', name: 'app_backuplog_import_iperius', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function importIperiusReport(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        if ($request->isMethod('POST')) {
-            $reportContent = $request->request->get('report_content');
-            // Ici vous ajouteriez la logique pour parser le rapport Iperius et créer un nouvel objet BackupLog
-            $this->addFlash('success', 'Rapport Iperius importé avec succès');
-            return $this->redirectToRoute('app_backuplog_index');
-        }
-        return $this->render('backuplog/import_iperius.html.twig');
-    }
 } 

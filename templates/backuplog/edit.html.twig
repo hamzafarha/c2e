@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier rapport de sauvegarde - C2E{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .backup-card {
+            max-width: 900px;
+            margin: 2rem auto;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.18);
+            background: rgba(255,255,255,0.98);
+        }
+        .backup-card-header {
+            background: linear-gradient(135deg, #f7b731 0%, #f5cd79 100%);
+            color: #222;
+            border-radius: 18px 18px 0 0;
+            padding: 2rem 2rem 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .backup-card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .backup-section {
+            padding: 2rem 2rem 0.5rem 2rem;
+        }
+        .backup-section-title {
+            color: #3a7bd5;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .required-label:after {
+            content: " *";
+            color: #dc3545;
+        }
+        .form-actions {
+            background-color: #f8f9fa;
+            padding: 1.5rem 2rem;
+            border-radius: 0 0 18px 18px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .flatpickr-input {
+            background: #f8f9fa;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="backup-card">
+    <div class="backup-card-header">
+        <i class="bi bi-pencil-square display-5"></i>
+        <h2 class="mb-0">Modifier le rapport de sauvegarde</h2>
+    </div>
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger m-4">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+    <div class="backup-section">
+        <div class="backup-section-title">Informations de base</div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form_label(form.backupName, 'Nom de la sauvegarde', {'label_attr': {'class': 'form-label required-label'}}) }}
+                {{ form_widget(form.backupName, {'attr': {'class': 'form-control'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.backupName) }}</div>
+            </div>
+            <div class="col-md-6">
+                {{ form_label(form.backupType, 'Type de sauvegarde', {'label_attr': {'class': 'form-label required-label'}}) }}
+                {{ form_widget(form.backupType, {'attr': {'class': 'form-select'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Planification</div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form_label(form.startTime, 'Heure de début', {'label_attr': {'class': 'form-label required-label'}}) }}
+                {{ form_widget(form.startTime, {'attr': {'class': 'form-control datetimepicker'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_label(form.endTime, 'Heure de fin', {'label_attr': {'class': 'form-label required-label'}}) }}
+                {{ form_widget(form.endTime, {'attr': {'class': 'form-control datetimepicker'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Statut et métriques</div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                {{ form_label(form.status, 'Statut', {'label_attr': {'class': 'form-label required-label'}}) }}
+                {{ form_widget(form.status, {'attr': {'class': 'form-select'}}) }}
+            </div>
+            <div class="col-md-4">
+                {{ form_label(form.totalSizeGB, 'Taille (GB)') }}
+                {{ form_widget(form.totalSizeGB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-md-4">
+                {{ form_label(form.filesProcessed, 'Fichiers traités') }}
+                {{ form_widget(form.filesProcessed, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Chemins</div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form_label(form.sourcePath, 'Chemin source') }}
+                {{ form_widget(form.sourcePath, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_label(form.destinationPath, 'Chemin destination') }}
+                {{ form_widget(form.destinationPath, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Détails techniques</div>
+        <div>
+            {{ form_label(form.details, 'Notes et observations') }}
+            {{ form_widget(form.details, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Nombre d'erreurs</div>
+        <div>
+            {{ form_label(form.errorsCount, 'Nombre d\'erreurs') }}
+            {{ form_widget(form.errorsCount, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('app_backuplog_show', {'id': backup_log.id}) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Annuler
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i> Enregistrer
+        </button>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('.datetimepicker', {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                locale: "fr",
+                allowInput: true
+            });
+        });
+    </script>
+{% endblock %} 

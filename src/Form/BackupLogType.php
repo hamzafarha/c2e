@@ -64,10 +64,6 @@ class BackupLogType extends AbstractType
                 'label' => 'Fichiers traités',
                 'required' => false
             ])
-            ->add('errorsCount', IntegerType::class, [
-                'label' => 'Nombre d\'erreurs',
-                'required' => false
-            ])
             ->add('sourcePath', TextType::class, [
                 'label' => 'Chemin source',
                 'required' => false
@@ -80,6 +76,10 @@ class BackupLogType extends AbstractType
                 'label' => 'Détails techniques',
                 'required' => false,
                 'attr' => ['rows' => 4]
+            ])
+            ->add('errorsCount', IntegerType::class, [
+                'label' => 'Nombre d\'erreurs',
+                'required' => false
             ])
         ;
     }
