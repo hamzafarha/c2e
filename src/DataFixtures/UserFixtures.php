@@ -28,6 +28,11 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
                 'password' => 'farhani',
                 'roles' => ['ROLE_ADMIN']
             ],
+            [
+                'username' => 'SAMEH',
+                'password' => 'BAMOUNA',
+                'roles' => ['ROLE_ADMIN']
+            ]
             // Vous pouvez ajouter d'autres utilisateurs ici
         ];
 

@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du rapport de sauvegarde - C2E{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .backup-card {
+            max-width: 900px;
+            margin: 2rem auto;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.18);
+            background: rgba(255,255,255,0.98);
+        }
+        .backup-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 18px 18px 0 0;
+            padding: 2rem 2rem 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+        .backup-card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .backup-section {
+            padding: 2rem 2rem 0.5rem 2rem;
+        }
+        .backup-section-title {
+            color: #3a7bd5;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .badge-status {
+            font-size: 1rem;
+            padding: 0.5em 1em;
+            border-radius: 1em;
+        }
+        .form-actions {
+            background-color: #f8f9fa;
+            padding: 1.5rem 2rem;
+            border-radius: 0 0 18px 18px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .show-label {
+            color: #888;
+            font-size: 0.98rem;
+        }
+        .show-value {
+            font-weight: 500;
+            color: #222;
+        }
+        .show-block {
+            margin-bottom: 1.2rem;
+        }
+        .show-code {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 0.5em 1em;
+            font-size: 0.97em;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="backup-card">
+    <div class="backup-card-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-file-earmark-text display-5"></i>
+            <h2 class="mb-0">Détail du rapport de sauvegarde</h2>
+        </div>
+        <span class="badge badge-status bg-{{ backup_log.status == 'completed' ? 'success' : (backup_log.status == 'failed' ? 'danger' : (backup_log.status == 'running' ? 'info' : 'warning')) }}">
+            {{ backup_log.status|trans }}
+        </span>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Informations de base</div>
+        <div class="row g-3">
+            <div class="col-md-6 show-block">
+                <div class="show-label">Nom de la sauvegarde</div>
+                <div class="show-value">{{ backup_log.backupName }}</div>
+            </div>
+            <div class="col-md-6 show-block">
+                <div class="show-label">Type de sauvegarde</div>
+                <div class="show-value">{{ backup_log.backupType|trans }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Planification</div>
+        <div class="row g-3">
+            <div class="col-md-6 show-block">
+                <div class="show-label">Heure de début</div>
+                <div class="show-value">{{ backup_log.startTime ? backup_log.startTime|date('d/m/Y H:i') : 'N/A' }}</div>
+            </div>
+            <div class="col-md-6 show-block">
+                <div class="show-label">Heure de fin</div>
+                <div class="show-value">{{ backup_log.endTime ? backup_log.endTime|date('d/m/Y H:i') : 'N/A' }}</div>
+            </div>
+            <div class="col-md-6 show-block">
+                <div class="show-label">Durée</div>
+                <div class="show-value">{{ backup_log.duration ?? 'N/A' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Statut et métriques</div>
+        <div class="row g-3">
+            <div class="col-md-4 show-block">
+                <div class="show-label">Taille (GB)</div>
+                <div class="show-value">{{ backup_log.totalSizeGB ? backup_log.totalSizeGB|number_format(2) ~ ' GB' : 'N/A' }}</div>
+            </div>
+            <div class="col-md-4 show-block">
+                <div class="show-label">Fichiers traités</div>
+                <div class="show-value">{{ backup_log.filesProcessed ?? 'N/A' }}</div>
+            </div>
+            <div class="col-md-4 show-block">
+                <div class="show-label">Nombre d'erreurs</div>
+                <div class="show-value">{{ backup_log.errorsCount ?? '0' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Chemins</div>
+        <div class="row g-3">
+            <div class="col-md-6 show-block">
+                <div class="show-label">Chemin source</div>
+                <div class="show-code">{{ backup_log.sourcePath ?? 'Non spécifié' }}</div>
+            </div>
+            <div class="col-md-6 show-block">
+                <div class="show-label">Chemin destination</div>
+                <div class="show-code">{{ backup_log.destinationPath ?? 'Non spécifié' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="backup-section">
+        <div class="backup-section-title">Détails techniques</div>
+        <div class="show-block">
+            {% if backup_log.details %}
+                <div class="show-code">{{ backup_log.details|nl2br }}</div>
+            {% else %}
+                <span class="text-muted">Aucun détail technique</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('app_backuplog_index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Retour
+        </a>
+        <a href="{{ path('app_backuplog_edit', {'id': backup_log.id}) }}" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i> Modifier
+        </a>
+    </div>
+</div>
+{% endblock %} 

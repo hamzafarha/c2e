@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}C2E - Gestion d'Équipements{% endblock %}</title>
+        <title>{% block title %}C2E - Service Informatique{% endblock %}</title>
         <link rel="icon" href="{{ asset('logo_c2e_baseline2.png') }}">
 
         <!-- Bootstrap CSS -->
@@ -55,6 +55,7 @@
                     margin-top: 15px;
                 }
             </style>
+            
         {% endblock %}
 
         {% block javascripts %}
@@ -67,13 +68,13 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Sidebar -->
+                {% if app.user and app.request.attributes.get('_route') != 'app_login' %}
                 <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                     <div class="position-sticky pt-3 d-flex flex-column" style="height: 100vh;">
                         <div>
                             <div class="text-center mb-4">
                                 <img src="{{ asset('logo_c2e_baseline2.png') }}" alt="C2E Logo" class="img-fluid" style="max-height: 80px;">
-                                <h5 class="text-white mt-2">C2E</h5>
-                                <p class="text-white-50 small">Gestion d'Équipements</p>
+                                <h5 class="text-white mt-2">C2E - Service Informatique</h5>
                             </div>
 
                             {% if app.user %}
@@ -171,9 +172,10 @@
                         </div>
                     </div>
                 </nav>
+                {% endif %}
 
                 <!-- Main content -->
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <main class="{% if app.user and app.request.attributes.get('_route') != 'app_login' %}col-md-9 ms-sm-auto col-lg-10{% else %}col-12{% endif %} px-md-4 main-content">
                     <div class="pt-3 pb-2 mb-3">
                         <!-- Messages flash -->
                         {% for type, messages in app.flashes %}
@@ -199,6 +201,7 @@
                 </main>
             </div>
         </div>
+        {% if app.user %}
         <div id="chatbot-widget" style="position:fixed;bottom:24px;right:24px;z-index:9999;font-family:inherit;">
             <div id="chatbot-box" style="display:none;box-shadow:0 8px 32px rgba(0,0,0,0.2);border-radius:16px;overflow:hidden;width:340px;max-width:90vw;">
                 <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:12px 16px;font-weight:bold;display:flex;align-items:center;">
@@ -215,6 +218,7 @@
                 🤖
             </button>
         </div>
+        {% endif %}
         <script>
         const widget = document.getElementById('chatbot-widget');
         const box = document.getElementById('chatbot-box');

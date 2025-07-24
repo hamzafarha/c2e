@@ -46,6 +46,9 @@ class BackupLog
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $destinationPath = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $duration = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -190,5 +193,11 @@ class BackupLog
             return $interval->format('%Hh %Im %Ss');
         }
         return null;
+    }
+
+    public function setDuration(string $duration): static
+    {
+        $this->duration = $duration;
+        return $this;
     }
 }
