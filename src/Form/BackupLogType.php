@@ -80,8 +80,7 @@ class BackupLogType extends AbstractType
             ->add('errorsCount', IntegerType::class, [
                 'label' => 'Nombre d\'erreurs',
                 'required' => false
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

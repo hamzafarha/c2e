@@ -8,11 +8,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpClient\HttpClient;
+use App\Repository\EquipementRepository;
 
 class ChatbotController extends AbstractController
 {
     #[Route('/chatbot', name: 'chatbot', methods: ['POST'])]
-    public function chatbot(Request $request, ArticleRepository $articleRepo): JsonResponse
+    public function chatbot(Request $request, ArticleRepository $articleRepo, EquipementRepository $equipementRepo): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $question = strtolower($data['question'] ?? '');
@@ -61,6 +62,34 @@ class ChatbotController extends AbstractController
             foreach ($articles as $a) {
                 $answer .= "{$a->getRefart()} ({$a->getNomart()}) : {$a->getStockActuel()}<br>";
             }
+            return new JsonResponse(['answer' => $answer]);
+        }
+
+        // Réponse à "Quels sont les équipements en panne ?"
+        if (preg_match('/(équipements?|materiel|matériel).*(en panne|panne)/', $question)) {
+            $equipements = $equipementRepo->findEnPanne();
+            if (!$equipements) {
+                return new JsonResponse(['answer' => "Aucun équipement en panne."]);
+            }
+            $answer = "Équipements en panne :<ul>";
+            foreach ($equipements as $e) {
+                $answer .= "<li>" . htmlspecialchars($e->getNomeq()) . " (" . htmlspecialchars($e->getReferenceeq()) . ")</li>";
+            }
+            $answer .= "</ul>";
+            return new JsonResponse(['answer' => $answer]);
+        }
+
+        // Réponse à "Quels sont les équipements qui exigent une intervention ?"
+        if (preg_match('/(équipements?|materiel|matériel).*(intervention|maintenance|à faire|à réaliser|exigent|exige)/', $question)) {
+            $equipements = $equipementRepo->findExigeantIntervention();
+            if (!$equipements) {
+                return new JsonResponse(['answer' => "Aucun équipement n'exige d'intervention aujourd'hui."]);
+            }
+            $answer = "Équipements exigeant une intervention :<ul>";
+            foreach ($equipements as $e) {
+                $answer .= "<li>" . htmlspecialchars($e->getNomeq()) . " (" . htmlspecialchars($e->getReferenceeq()) . ")</li>";
+            }
+            $answer .= "</ul>";
             return new JsonResponse(['answer' => $answer]);
         }
 

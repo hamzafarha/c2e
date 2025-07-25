@@ -40,4 +40,29 @@ class EquipementRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * @return Equipement[]
+     */
+    public function findEnPanne(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.etat = :etat')
+            ->setParameter('etat', 'en_panne')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Equipement[]
+     */
+    public function findExigeantIntervention(): array
+    {
+        // On considère qu'un équipement exige une intervention si la prochaine intervention de l'un de ses interventions est aujourd'hui ou dépassée
+        $qb = $this->createQueryBuilder('e')
+            ->innerJoin('e.interventions', 'i')
+            ->andWhere('i.prochainedate <= :today')
+            ->setParameter('today', new \DateTimeImmutable('today'));
+        return $qb->getQuery()->getResult();
+    }
 }
