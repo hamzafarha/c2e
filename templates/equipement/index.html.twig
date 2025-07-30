@@ -36,6 +36,91 @@
                 width: 100%;
             }
         }
+
+        /* Style pour le bouton d'import */
+        .btn-import {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .btn-import input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            display: block;
+        }
+
+        /* Amélioration du tableau */
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-size: 0.85em;
+            font-weight: 500;
+            padding: 5px 8px;
+        }
+
+        .badge-en_service {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-en_panne {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-maintenance {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .badge-hors_service {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: nowrap;
+        }
+
+        .qr-code-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .qr-code-img:hover {
+            transform: scale(1.5);
+        }
     </style>
 {% endblock %}
 
@@ -47,6 +132,11 @@
             <a href="{{ path('app_equipement_new') }}" class="btn btn-success">
                 ➕ Ajouter un équipement
             </a>
+            
+            <label class="btn btn-info btn-import ms-2">
+                📤 Importer Excel
+                <input type="file" id="file-input" name="fichier_excel" accept=".xlsx,.xls" style="display: none;">
+            </label>
         </div>
 
         <div class="filter-container">
@@ -88,8 +178,23 @@
         </div>
     </div>
 
+    <!-- Modal pour afficher le QR Code en grand -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img id="qrModalImage" src="" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Gestion de la recherche et filtrage
         const searchInput = document.getElementById('search-equipement');
         const resultsTbody = document.getElementById('equipement-results');
         const sortBtn = document.getElementById('sort-equipement');
@@ -116,6 +221,40 @@
             order = order === 'desc' ? 'asc' : 'desc';
             sortIcon.textContent = order === 'desc' ? '⬇️' : '⬆️';
             fetchEquipements();
+        });
+
+        // Gestion de l'import Excel
+        const fileInput = document.getElementById('file-input');
+        
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length === 0) return;
+            
+            const formData = new FormData();
+            formData.append('fichier_excel', this.files[0]);
+            
+            // Afficher un indicateur de chargement
+            const originalBtnText = sortBtn.innerHTML;
+            sortBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Import en cours...';
+            sortBtn.disabled = true;
+            
+            fetch('{{ path('app_equipement_import_excel') }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de l\'importation');
+            })
+            .finally(() => {
+                sortBtn.innerHTML = originalBtnText;
+                sortBtn.disabled = false;
+                fileInput.value = ''; // Réinitialiser l'input file
+            });
         });
     });
     </script>

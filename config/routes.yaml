@@ -4,6 +4,10 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+app_equipement_import_excel:
+    path: /equipement/import-excel
+    controller: App\Controller\EquipementController::importExcel
+    methods: POST
 
 homepage:
     path: /
