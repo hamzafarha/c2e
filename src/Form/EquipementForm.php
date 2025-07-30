@@ -24,15 +24,19 @@ class EquipementForm extends AbstractType
             'Autres' => 'autres',
         ],
         'placeholder' => 'Sélectionnez un type...',
-        'attr' => ['class' => 'form-select'], // Bootstrap style
+        'attr' => ['class' => 'form-select'],
     ])
             ->add('nomeq')
             ->add('referenceeq')
             ->add('localisationeq')
-            ->add('modeleeq')
+            ->add('modeleeq', null, [
+                'required' => false,
+                'label' => 'Modèle (optionnel)',
+                'attr' => ['placeholder' => 'Saisissez le modèle si connu']
+            ])
             ->add('numserieeq')
-                ->add('etat', ChoiceType::class, [
-        'label' => 'État',
+            ->add('etat', ChoiceType::class, [
+        'label' => 'État de l’équipement',
         'choices' => [
             'En service' => 'en_service',
             'En panne' => 'en_panne',
@@ -42,7 +46,6 @@ class EquipementForm extends AbstractType
         'placeholder' => 'Sélectionner un état',
         'attr' => ['class' => 'form-select']
     ]);
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
