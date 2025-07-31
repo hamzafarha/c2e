@@ -59,11 +59,19 @@
             display: block;
         }
 
-        /* Amélioration du tableau */
-        .table-responsive {
+        /* Style pour la table avec défilement horizontal */
+        .table-wrapper {
             border-radius: 8px;
-            overflow: hidden;
+            overflow-x: auto;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            min-width: 1000px; /* Largeur minimale pour forcer le défilement si nécessaire */
+            margin-bottom: 0;
         }
 
         .table th {
@@ -72,6 +80,7 @@
             top: 0;
             background-color: #343a40;
             color: white;
+            z-index: 10;
         }
 
         .table td {
@@ -121,6 +130,25 @@
         .qr-code-img:hover {
             transform: scale(1.5);
         }
+
+        /* Style personnalisé pour la barre de défilement */
+        .table-wrapper::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 {% endblock %}
 
@@ -156,7 +184,7 @@
             </button>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-wrapper">
             <table class="table table-bordered table-hover table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
