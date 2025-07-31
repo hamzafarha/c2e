@@ -39,11 +39,13 @@ class InterventionForm extends AbstractType
                 'placeholder' => 'Choisir un état',
                 'attr' => ['class' => 'form-select'],
             ])
-           ->add('prochainedate', DateType::class, [
-    'widget' => 'single_text',
-    'label' => 'Prochaine intervention',
-    'attr' => ['class' => 'form-control', 'id' => 'prochaine-date-field']
-])
+
+            ->add('prochainedate', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Prochaine intervention',
+                'required' => false, 
+                'attr' => ['class' => 'form-control', 'id' => 'intervention_prochaine_date']
+            ])
     
        ;
     }

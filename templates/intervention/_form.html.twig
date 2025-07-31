@@ -7,7 +7,10 @@
     </div>
     <div class="col-md-6">
         {{ form_label(form.typeint) }}
-        {{ form_widget(form.typeint) }}
+        {{ form_widget(form.typeint, {'attr': {
+            'class': 'form-control',
+            'id': 'intervention_type'
+        }}) }}
     </div>
 </div>
 
@@ -22,10 +25,13 @@
     </div>
 </div>
 
-<div class="row mb-3" id="prochaine-date-row">
+<div class="row mb-3">
     <div class="col-md-6">
         {{ form_label(form.prochainedate) }}
-        {{ form_widget(form.prochainedate, {'attr': {'class': 'form-control'}}) }}
+        {{ form_widget(form.prochainedate, {'attr': {
+            'class': 'form-control',
+            'id': 'intervention_prochaine_date'
+        }}) }}
     </div>
 </div>
 
@@ -37,27 +43,24 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const typeSelect = document.getElementById('typeint-select');
-    const prochaineDateField = document.getElementById('prochaine-date-field');
-
+    const typeSelect = document.getElementById('intervention_type');
+    const prochaineDateField = document.getElementById('intervention_prochaine_date');
+    
     function toggleProchaineDate() {
-        console.log('Type sélectionné:', typeSelect.value); // Debug
         if (typeSelect.value === 'curatif') {
             prochaineDateField.disabled = true;
             prochaineDateField.value = '';
-            console.log('Champ prochaine date désactivé'); // Debug
+            prochaineDateField.closest('.row').style.display = 'none';
         } else {
             prochaineDateField.disabled = false;
-            console.log('Champ prochaine date activé'); // Debug
+            prochaineDateField.closest('.row').style.display = 'flex';
         }
     }
-
-    if (typeSelect && prochaineDateField) {
-        typeSelect.addEventListener('change', toggleProchaineDate);
-        toggleProchaineDate(); // Initial check
-        console.log('Script initialisé'); // Debug
-    } else {
-        console.log('Éléments non trouvés:', {typeSelect: !!typeSelect, prochaineDateField: !!prochaineDateField}); // Debug
-    }
+    
+    // Initialisation
+    toggleProchaineDate();
+    
+    // Écouteur d'événement
+    typeSelect.addEventListener('change', toggleProchaineDate);
 });
 </script>
