@@ -26,7 +26,7 @@ class Intervention
     #[ORM\Column(length: 255)]
     private ?string $etatapres = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE , nullable:true)]
     private ?\DateTimeInterface $prochainedate = null;
 
     

@@ -28,7 +28,7 @@ class Equipement
     #[ORM\Column(length: 255)]
     private ?string $localisationeq = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255 , nullable:true)]
     private ?string $modeleeq = null;
 
     #[ORM\Column(length: 255)]
