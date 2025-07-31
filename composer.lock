@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e97a4ef701072cf2b62d28592c1725c",
+    "content-hash": "5ad704f800836968501639ff58e43a0e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2195,16 +2195,16 @@
         },
         {
             "name": "knplabs/knp-paginator-bundle",
-            "version": "v6.8.1",
+            "version": "v6.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "038c50cf7d5da5e55533f6e803aeae73eb8b8d45"
+                "reference": "9bf5212f01ca316ef8fe42208e00685e8b6ffa69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/038c50cf7d5da5e55533f6e803aeae73eb8b8d45",
-                "reference": "038c50cf7d5da5e55533f6e803aeae73eb8b8d45",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/9bf5212f01ca316ef8fe42208e00685e8b6ffa69",
+                "reference": "9bf5212f01ca316ef8fe42208e00685e8b6ffa69",
                 "shasum": ""
             },
             "require": {
@@ -2215,15 +2215,18 @@
                 "symfony/event-dispatcher": "^6.4 || ^7.0",
                 "symfony/http-foundation": "^6.4 || ^7.0",
                 "symfony/http-kernel": "^6.4 || ^7.0",
-                "symfony/routing": "^6.4 || ^7.0",
-                "symfony/translation": "^6.4 || ^7.0",
-                "twig/twig": "^3.0"
+                "symfony/routing": "^6.4 || ^7.0"
             },
             "require-dev": {
                 "phpstan/phpstan": "^1.12",
                 "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0",
-                "symfony/expression-language": "^6.4 || ^7.0",
-                "symfony/templating": "^6.4 || ^7.0"
+                "symfony/templating": "^6.4 || ^7.0",
+                "symfony/translation": "^6.4 || ^7.0",
+                "twig/twig": "^3.0"
+            },
+            "suggest": {
+                "symfony/translation": "To use the templates",
+                "twig/twig": "To use the templates"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -2263,9 +2266,9 @@
             ],
             "support": {
                 "issues": "https://github.com/KnpLabs/KnpPaginatorBundle/issues",
-                "source": "https://github.com/KnpLabs/KnpPaginatorBundle/tree/v6.8.1"
+                "source": "https://github.com/KnpLabs/KnpPaginatorBundle/tree/v6.9.1"
             },
-            "time": "2025-05-20T07:07:41+00:00"
+            "time": "2025-07-25T07:53:13+00:00"
         },
         {
             "name": "laravel/serializable-closure",

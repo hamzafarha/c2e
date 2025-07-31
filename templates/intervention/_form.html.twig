@@ -30,7 +30,34 @@
 </div>
 
 <div class="text-end mt-4">
-    <button class="btn btn-success">✅ Enregistrer l’intervention</button>
+    <button class="btn btn-success">✅ Enregistrer l'intervention</button>
 </div>
 
 {{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('typeint-select');
+    const prochaineDateField = document.getElementById('prochaine-date-field');
+
+    function toggleProchaineDate() {
+        console.log('Type sélectionné:', typeSelect.value); // Debug
+        if (typeSelect.value === 'curatif') {
+            prochaineDateField.disabled = true;
+            prochaineDateField.value = '';
+            console.log('Champ prochaine date désactivé'); // Debug
+        } else {
+            prochaineDateField.disabled = false;
+            console.log('Champ prochaine date activé'); // Debug
+        }
+    }
+
+    if (typeSelect && prochaineDateField) {
+        typeSelect.addEventListener('change', toggleProchaineDate);
+        toggleProchaineDate(); // Initial check
+        console.log('Script initialisé'); // Debug
+    } else {
+        console.log('Éléments non trouvés:', {typeSelect: !!typeSelect, prochaineDateField: !!prochaineDateField}); // Debug
+    }
+});
+</script>

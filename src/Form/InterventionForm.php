@@ -29,7 +29,16 @@ class InterventionForm extends AbstractType
             'attr' => ['class' => 'form-select', 'id' => 'typeint-select']
         ])
             ->add('technicien')
-            ->add('etatapres')
+            ->add('etatapres', ChoiceType::class, [
+                'label' => 'État après',
+                'choices' => [
+                    'En service' => 'en service',
+                    'En panne' => 'en panne',
+                    'Hors service' => 'hors service',
+                ],
+                'placeholder' => 'Choisir un état',
+                'attr' => ['class' => 'form-select'],
+            ])
            ->add('prochainedate', DateType::class, [
     'widget' => 'single_text',
     'label' => 'Prochaine intervention',
